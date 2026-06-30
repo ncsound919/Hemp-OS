@@ -317,19 +317,18 @@ export default function App() {
       <div className="bg-[#121214] border-b border-[#1f1f21] px-6 py-2 flex items-center justify-between shadow-sm overflow-x-auto">
         <div className="flex gap-2 min-w-max">
           {[
-            { id: 'kernel', label: 'Layer 1: Autonomous Pipeline Studio', desc: 'Flowsheet, Solver & Media Core', icon: Compass, color: 'text-blue-400' },
-            { id: 'orchestration', label: 'Layer 2: Experiment Orchestrator', desc: 'Protocol Sweeps & Queues', icon: Layers, color: 'text-emerald-400' },
-            { id: 'provenance', label: 'Layer 3: Data & Provenance Ledger', desc: 'Immutable Lineage Logs', icon: Database, color: 'text-amber-400' },
-            { id: 'corpus', label: 'Layer 3.5: Research Corpus', desc: 'Google Drive Knowledge Layer', icon: HelpCircle, color: 'text-sky-400' },
-            { id: 'autonomy', label: 'Layer 4: Policy & Autonomy Guards', desc: 'Rule Checks & Tuning Agents', icon: Cpu, color: 'text-purple-400' },
-            { id: 'reflexive', label: 'Layer 5: Reflexive Diagnostics', desc: 'Self-Aware Healing OS', icon: ShieldCheck, color: 'text-indigo-400' },
-            { id: 'interface', label: 'Layer 6: Multi-Interface Support', desc: 'CLI, REST API, Headless Sweeps', icon: Terminal, color: 'text-[#38bdf8]' },
-            { id: 'plugins', label: 'Layer 7: Scientific Plugins', desc: 'Dynamic Drivers & Solvers', icon: FolderGit2, color: 'text-emerald-400' },
-            { id: 'autonomy_engine', label: 'Layer 8: Autonomy Lab Brain', desc: 'Deterministic Schedulers', icon: Cpu, color: 'text-purple-400' },
-            { id: 'scientific_supersystems', label: 'Layer 9: Scientific Super-Systems', desc: '12 Unified Deterministic Engines', icon: Boxes, color: 'text-cyan-400' },
-            { id: 'strain_lab', label: 'Layer 10: Strain Breed Lab', desc: 'Genetic Mapping & Crossbreed Sim', icon: Dna, color: 'text-emerald-400' },
-            { id: 'ingestion_hub', label: 'Layer 11: Ingestion & Analysis Hub', desc: 'OCR CoA, Kaggle & Academic Feeds', icon: FileSearch, color: 'text-blue-400' },
-            { id: 'windows_integration', label: 'Layer 12: Windows System Interop', desc: 'Copilot, Services, PowerShell & VSS', icon: Laptop, color: 'text-blue-500' },
+            { id: 'kernel', label: 'Layer 1: Deterministic Kernel', desc: 'Flowsheet, Solver & Media Core', icon: Compass, color: 'text-blue-400' },
+            { id: 'orchestration', label: 'Layer 2: Scientific Scheduler', desc: 'Protocol Sweeps & Queues', icon: Layers, color: 'text-emerald-400' },
+            { id: 'provenance', label: 'Layer 3: Scientific Memory/Storage Manager', desc: 'Immutable Lineage Logs', icon: Database, color: 'text-amber-400' },
+            { id: 'ingestion_hub', label: 'Layer 4: Ingestion Subsystem', desc: 'OCR CoA, Kaggle & Academic Feeds', icon: FileSearch, color: 'text-blue-400' },
+            { id: 'corpus', label: 'Layer 5: Scientific Filesystem', desc: 'Google Drive Knowledge Layer', icon: HelpCircle, color: 'text-sky-400' },
+            { id: 'autonomy', label: 'Layer 6: Security/Policy Layer', desc: 'Rule Checks & Tuning Agents', icon: Cpu, color: 'text-purple-400' },
+            { id: 'plugins', label: 'Layer 7: Plugin/Driver System', desc: 'Dynamic Drivers & Solvers', icon: FolderGit2, color: 'text-emerald-400' },
+            { id: 'interface', label: 'Layer 8: Networking Layer', desc: 'CLI, REST API, WebSockets', icon: Terminal, color: 'text-[#38bdf8]' },
+            { id: 'autonomy_engine', label: 'Layer 9: System Services', desc: 'Deterministic Schedulers', icon: Cpu, color: 'text-purple-400' },
+            { id: 'reflexive', label: 'Layer 10: Telemetry/Logging', desc: 'Self-Aware Healing OS', icon: ShieldCheck, color: 'text-indigo-400' },
+            { id: 'scientific_supersystems', label: 'Layer 11: Scientific UI', desc: '12 Unified Deterministic Engines', icon: Boxes, color: 'text-cyan-400' },
+            { id: 'windows_integration', label: 'Layer 12: Copilot Integration Layer', desc: 'Copilot, Services & Interop', icon: Laptop, color: 'text-blue-500' },
           ].map((layer) => {
             const Icon = layer.icon;
             const isSelected = activeTab === layer.id;
@@ -910,6 +909,19 @@ export default function App() {
           </motion.div>
         )}
       </main>
+
+      {/* Global Copilot Launch Button */}
+      <div className="fixed bottom-12 right-12 z-50">
+        <button 
+          onClick={() => setActiveTab('windows_integration')}
+          className="bg-[#121214] border border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.2)] hover:border-purple-500 hover:bg-purple-900/20 text-purple-400 p-4 rounded-full flex items-center justify-center transition-all group relative"
+        >
+          <Sparkles className="w-6 h-6 animate-pulse" />
+          <span className="absolute right-full mr-4 bg-black text-white text-[10px] uppercase tracking-widest px-3 py-1.5 rounded border border-[#333] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Summon Copilot System
+          </span>
+        </button>
+      </div>
 
       {/* Elegant Dark Theme Footer */}
       <footer className="h-8 bg-[#0d0d0f] border-t border-[#1f1f21] flex items-center px-6 justify-between mt-auto">

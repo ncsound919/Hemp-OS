@@ -269,7 +269,10 @@ Since you are a compact model under 3B parameters, keep answers ultra-short, sim
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
           <div>
-            <h3 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">Hemp OS Advisor</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">Hemp OS Advisor</h3>
+              <span className="text-[8px] bg-purple-900/40 text-purple-300 border border-purple-500/30 px-1 py-0.5 rounded font-mono font-bold tracking-widest">[AI ADVISORY]</span>
+            </div>
             <span className="text-[8px] font-mono text-gray-500 block uppercase">Dual-Core AI Reasoning</span>
           </div>
         </div>

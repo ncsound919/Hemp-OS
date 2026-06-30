@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Biomass, ProcessGraph, ProcessStage } from '../../kernel/core/types.ts';
 import { KernelExecutor } from '../../kernel/workflow/executor.ts';
 import { 
-  Play, Sliders, Layers, RefreshCw, BarChart2, CheckCircle2, ChevronRight, FileSpreadsheet, ArrowRight
+  Play, Sliders, Layers, RefreshCw, BarChart2, CheckCircle2, ChevronRight, FileSpreadsheet, ArrowRight, Sparkles
 } from 'lucide-react';
 import { 
   ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend 
@@ -216,9 +216,23 @@ export function ExperimentOrchestrator({
         <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-blue-500" />
           <div>
-            <h2 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">
-              Experiment Orchestration Layer
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">
+                Experiment Orchestration Layer
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setStartVal(2);
+                  setEndVal(15);
+                  setSteps(10);
+                }}
+                className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors"
+              >
+                <Sparkles className="w-3 h-3" />
+                COPILOT CAMPAIGN
+              </button>
+            </div>
             <p className="text-[10px] text-[#555] font-mono mt-0.5">
               Protocol Sequencing, Sweep Campaigns & Dependencies
             </p>

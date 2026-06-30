@@ -95,7 +95,13 @@ export const ScientificDiscoveryPublisher: React.FC<ScientificDiscoveryPublisher
             <Microscope className="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-widest text-white">Layer 12: Scientific Discovery & Propaganda Publisher</h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-white">Layer 12: Scientific Discovery & Propaganda Publisher</h2>
+              <button className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors">
+                <Sparkles className="w-3 h-3" />
+                COPILOT DRAFT
+              </button>
+            </div>
             <p className="text-[10px] font-mono text-gray-500 uppercase tracking-tighter mt-0.5">
               Translating autonomous chemical simulation outputs into verified academic papers and public media flyers
             </p>

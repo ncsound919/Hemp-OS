@@ -387,6 +387,7 @@ The literature supports maintaining standard sub-freezing separation matrices. Y
             <h2 className="text-sm font-bold text-white uppercase tracking-widest font-mono">
               Research Corpus <span className="text-[#666] font-normal italic">Level 3</span>
             </h2>
+            <span className="ml-2 text-[8px] bg-sky-900/40 text-sky-300 border border-sky-500/30 px-1 py-0.5 rounded font-mono font-bold tracking-widest">[IMPORTED DOCUMENT FACTS]</span>
           </div>
           <p className="text-[10px] text-gray-500 font-mono tracking-tight uppercase">
             Ingestion & Knowledge Graph Layer (Google Drive Connector)

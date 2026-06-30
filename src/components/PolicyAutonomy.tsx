@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Biomass, ProcessGraph } from '../../kernel/core/types.ts';
 import { KernelExecutor } from '../../kernel/workflow/executor.ts';
 import { 
-  ShieldAlert, Target, Award, RefreshCw, Play, CheckCircle2, AlertOctagon, TrendingUp, Cpu
+  ShieldAlert, Target, Award, RefreshCw, Play, CheckCircle2, AlertOctagon, TrendingUp, Cpu, ShieldCheck
 } from 'lucide-react';
 import { 
   ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend 
 } from 'recharts';
+import { ScientificAuditFramework } from './ScientificAuditFramework.tsx';
 
 interface PolicyAutonomyProps {
   graph: ProcessGraph;
@@ -21,6 +22,7 @@ export function PolicyAutonomy({
   onApplyConfig,
   onRecordProvenance 
 }: PolicyAutonomyProps) {
+  const [subTab, setSubTab] = useState<'rules' | 'audit'>('audit');
   // 1. Policy Settings (Constraints)
   const [minSolventRatio, setMinSolventRatio] = useState<number>(5.0);
   const [maxDecarbTemp, setMaxDecarbTemp] = useState<number>(150.0);
@@ -210,21 +212,43 @@ export function PolicyAutonomy({
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-[#1f1f21]">
         <div className="flex items-center gap-2">
-          <Cpu className="w-5 h-5 text-blue-500" />
+          <Cpu className="w-5 h-5 text-purple-500" />
           <div>
             <h2 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">
-              Policy & Autonomy Layer
+              Security, Policy & Audit Layer
             </h2>
             <p className="text-[10px] text-[#555] font-mono mt-0.5">
-              Deterministic Rules Engine, Boundary Guards & Feedback Optimization Search
+              Deterministic Rules Engine, Boundary Guards & Scientific Validation Audit
             </p>
           </div>
         </div>
-        <span className="text-[9px] font-mono font-bold bg-[#1a1a1c] text-blue-400 border border-[#2d2d30] px-2.5 py-0.5 rounded-full tracking-wider uppercase">
-          AUTONOMY GUARD ENGAGED
-        </span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSubTab('rules')}
+            className={`px-4 py-1.5 rounded-lg text-[9px] font-bold font-mono uppercase tracking-wider transition-all border ${
+              subTab === 'rules' 
+                ? 'bg-purple-950/40 border-purple-500/30 text-purple-300' 
+                : 'bg-[#0d0d0f] border-[#1f1f21] text-gray-500 hover:text-white'
+            }`}
+          >
+            Policy Rules Guard
+          </button>
+          <button
+            onClick={() => setSubTab('audit')}
+            className={`px-4 py-1.5 rounded-lg text-[9px] font-bold font-mono uppercase tracking-wider transition-all border flex items-center gap-1.5 ${
+              subTab === 'audit' 
+                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300' 
+                : 'bg-[#0d0d0f] border-[#1f1f21] text-gray-500 hover:text-white'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" /> Full Audit Framework
+          </button>
+        </div>
       </div>
 
+      {subTab === 'audit' ? (
+        <ScientificAuditFramework />
+      ) : (
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Side: Rule Guard Engine + Tuner Setup (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-4">
@@ -447,6 +471,7 @@ export function PolicyAutonomy({
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

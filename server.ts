@@ -5,6 +5,7 @@
 
 import express from 'express';
 import path from 'path';
+import fs from 'fs/promises';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
@@ -238,6 +239,59 @@ app.post('/api/drive/find', async (req, res) => {
     return res.json({ success: true, files: data.files || [] });
   } catch (err: any) {
     return res.status(500).json({ error: 'Internal server error during search', message: err.message });
+  }
+});
+
+// ==========================================
+// Scientific Scraping & Ingestion
+// ==========================================
+
+app.post('/api/scrape', async (req, res) => {
+  const { target, query } = req.body;
+  try {
+    // Determine search term
+    const searchTerm = query || 'cannabis strain genetics';
+    
+    // Create local folder for storage
+    const storageDir = path.join(process.cwd(), 'data', 'ingested_strains');
+    await fs.mkdir(storageDir, { recursive: true });
+
+    // Fetch data from OpenAlex API (Free Scientific Papers API)
+    const url = `https://api.openalex.org/works?search=${encodeURIComponent(searchTerm)}&per-page=10`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`OpenAlex API responded with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    const ingestedPapers = data.results.map((work: any) => ({
+      id: work.id,
+      title: work.title,
+      publication_year: work.publication_year,
+      authors: work.authorships?.map((a: any) => a.author.display_name).join(', ') || 'Unknown',
+      abstract: work.abstract_inverted_index ? 'Abstract available (indexed).' : 'No abstract.',
+      source: target,
+      url: work.id
+    }));
+
+    // Save to local file
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `ingested_batch_${timestamp}.json`;
+    const filePath = path.join(storageDir, filename);
+    
+    await fs.writeFile(filePath, JSON.stringify(ingestedPapers, null, 2), 'utf8');
+
+    return res.json({ 
+      success: true, 
+      count: ingestedPapers.length,
+      savedTo: filePath,
+      data: ingestedPapers
+    });
+
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Scraping failed', message: err.message });
   }
 });
 

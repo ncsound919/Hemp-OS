@@ -2,6 +2,14 @@
 
 A high-fidelity layered scientific operating system designed for hemp processing, biomanufacturing simulation, and computational research. Featuring a deterministic simulation kernel, strain crossbreeding labs, OCR CoA analysis, Google Drive integration, and autonomous scientific pipelines.
 
+## ⚠️ The Kernel is Law ⚠️
+Before making *any* contribution, you must ensure the core computational model remains mathematically deterministic.
+
+```bash
+npm run test:kernel
+```
+**This is the loudest signal in the repo.** The `test:kernel` suite runs hundreds of deterministic validations, coverage assertions, mass/energy balance proofs, thermodynamics bounding checks, and performance benchmarks. If it fails, your PR will be rejected. 
+
 ## Overview
 
 Hemp OS is a multi-layered deterministic platform that integrates theoretical science with automated digital processes. It handles the entire biomanufacturing pipeline, from genetic strain crossbreeding to thermodynamic modeling, phase-split analysis, data provenance, and autonomous campaign sweeps. 

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { ProcessStage } from '../../kernel/core/types.ts';
-import { Sliders, Thermometer, Clock, HelpCircle, Wind, Repeat } from 'lucide-react';
+import { Sliders, Thermometer, Clock, HelpCircle, Wind, Repeat, Sparkles } from 'lucide-react';
 
 interface StageConfiguratorProps {
   stage: ProcessStage;
@@ -30,8 +30,17 @@ export const StageConfigurator: React.FC<StageConfiguratorProps> = ({
       return (
         <div className="bg-[#121214] rounded-xl border border-[#1f1f21] p-5 shadow-md flex flex-col gap-4">
           <div className={sectionTitleStyle}>
-            <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-blue-400 flex items-center justify-center font-bold text-[10px]">E</span>
-            EXTRACTION CONFIGURATION
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-blue-400 flex items-center justify-center font-bold text-[10px]">E</span>
+              EXTRACTION CONFIGURATION
+            </div>
+            <button
+              onClick={() => onConfigChange(id, { ...config, extractionTemp: -60, duration: 25, solventRatio: 10 })}
+              className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors"
+            >
+              <Sparkles className="w-3 h-3" />
+              COPILOT AUTO-TUNE
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -126,8 +135,17 @@ export const StageConfigurator: React.FC<StageConfiguratorProps> = ({
       return (
         <div className="bg-[#121214] rounded-xl border border-[#1f1f21] p-5 shadow-md flex flex-col gap-4">
           <div className={sectionTitleStyle}>
-            <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-sky-400 flex items-center justify-center font-bold text-[10px]">W</span>
-            WINTERIZATION CONFIGURATION
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-sky-400 flex items-center justify-center font-bold text-[10px]">W</span>
+              WINTERIZATION CONFIGURATION
+            </div>
+            <button
+              onClick={() => onConfigChange(id, { ...config, coolingTemp: -65, coolingTime: 18, filtrationPasses: 2 })}
+              className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors"
+            >
+              <Sparkles className="w-3 h-3" />
+              COPILOT AUTO-TUNE
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -208,8 +226,17 @@ export const StageConfigurator: React.FC<StageConfiguratorProps> = ({
       return (
         <div className="bg-[#121214] rounded-xl border border-[#1f1f21] p-5 shadow-md flex flex-col gap-4">
           <div className={sectionTitleStyle}>
-            <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-purple-400 flex items-center justify-center font-bold text-[10px]">D</span>
-            DECARBOXYLATION KINETICS CONFIG
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-purple-400 flex items-center justify-center font-bold text-[10px]">D</span>
+              DECARBOXYLATION KINETICS CONFIG
+            </div>
+            <button
+              onClick={() => onConfigChange(id, { ...config, temperature: 125, duration: 45 })}
+              className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors"
+            >
+              <Sparkles className="w-3 h-3" />
+              COPILOT AUTO-TUNE
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -254,8 +281,17 @@ export const StageConfigurator: React.FC<StageConfiguratorProps> = ({
       return (
         <div className="bg-[#121214] rounded-xl border border-[#1f1f21] p-5 shadow-md flex flex-col gap-4">
           <div className={sectionTitleStyle}>
-            <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-amber-400 flex items-center justify-center font-bold text-[10px]">M</span>
-            DISTILLATION (WIPED-FILM MOLECULAR)
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded bg-[#1a1a1c] border border-[#2d2d30] text-amber-400 flex items-center justify-center font-bold text-[10px]">M</span>
+              DISTILLATION (WIPED-FILM MOLECULAR)
+            </div>
+            <button
+              onClick={() => onConfigChange(id, { ...config, evaporatorTemp: 195, condenserTemp: 65, vacuumPressure: 0.01 })}
+              className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors"
+            >
+              <Sparkles className="w-3 h-3" />
+              COPILOT AUTO-TUNE
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

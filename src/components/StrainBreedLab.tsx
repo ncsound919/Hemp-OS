@@ -4,7 +4,7 @@ import {
   GitMerge, HelpCircle, FileText, ChevronRight, RefreshCw, BarChart2,
   TreePine, Calendar, Scale, Thermometer, Database, Search, Sliders, MapPin, 
   Tag, Activity, DollarSign, Flame, FolderCheck, ShoppingBag, TrendingUp, UserCheck, 
-  Globe, ShieldAlert, Star, FileDown, UploadCloud, CheckCircle
+  Globe, ShieldAlert, Star, FileDown, UploadCloud, CheckCircle, LineChart, Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
@@ -82,7 +82,7 @@ interface StrainBreedLabProps {
 
 export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken }: StrainBreedLabProps) {
   // Main view tab: 'explorer' | 'comparer' | 'trait_finder'
-  const [activeMainTab, setActiveMainTab] = useState<'explorer' | 'comparer' | 'trait_finder'>('explorer');
+  const [activeMainTab, setActiveMainTab] = useState<'explorer' | 'comparer' | 'trait_finder' | 'scraper' | 'platform'>('platform');
 
   // Selected sub-tab for selected strain details perspective (representing the requested databases)
   const [activeIntelTab, setActiveIntelTab] = useState<'leafly' | 'seedfinder' | 'cannaconnection' | 'hytiva' | 'allbud'>('leafly');
@@ -588,6 +588,12 @@ export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken 
   const [isUploadingToDrive, setIsUploadingToDrive] = useState(false);
   const [driveUploadSuccess, setDriveUploadSuccess] = useState(false);
 
+  // Scraper State
+  const [isScraping, setIsScraping] = useState(false);
+  const [scrapeLogs, setScrapeLogs] = useState<string[]>([]);
+  const [scrapeTarget, setScrapeTarget] = useState('Leafly API / DOM');
+  const [scrapeQuery, setScrapeQuery] = useState('Haze Crossbreeds');
+
   // Radar Terpene chart data helper
   const getRadarData = (strain: Strain) => [
     { subject: 'Myrcene (Relax)', value: strain.terpenes.myrcene * 100 },
@@ -913,6 +919,42 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
     }
   };
 
+  const handleStartScraping = async () => {
+    setIsScraping(true);
+    setScrapeLogs([`Initializing Web Scraper Swarm for target: ${scrapeTarget}...`, 'Establishing Headless DOM Injectors...']);
+    
+    try {
+      const response = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          target: scrapeTarget,
+          query: scrapeQuery
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      setScrapeLogs(prev => [
+        ...prev, 
+        `✔️ SCAPE COMPLETE. Extracted ${data.count} science papers.`,
+        `✔️ Data successfully written to local folder: ${data.savedTo}`,
+        ...data.data.slice(0, 3).map((item: any) => `> INGESTED: ${item.title.substring(0, 50)}...`)
+      ]);
+
+    } catch (err: any) {
+      setScrapeLogs(prev => [...prev, `❌ [SCRAPE_ERR] Failed to scrape: ${err.message}`]);
+    } finally {
+      setIsScraping(false);
+    }
+  };
+
   return (
     <div className="bg-[#0b0b0c] border border-[#1f1f21] rounded-2xl overflow-hidden shadow-2xl">
       
@@ -924,6 +966,7 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
             <h2 className="text-sm font-bold text-white uppercase tracking-widest font-mono flex items-center gap-2">
               Hemp OS Strain Breed & Intel Lab <span className="text-[#666] font-normal italic text-xs">Layer 10</span>
             </h2>
+            <span className="ml-2 text-[8px] bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 px-1 py-0.5 rounded font-mono font-bold tracking-widest">[HEURISTIC/SIMULATED APPROXIMATIONS]</span>
           </div>
           <p className="text-[10px] text-gray-500 font-mono tracking-tight uppercase leading-relaxed max-w-2xl">
             Diploid Chromosome Mapping & Synthesized intelligence compiled from Leafly (5,000+ strains), SeedFinder Breeder indices, CannaConnection traits, Hytiva activities, and AllBud availability.
@@ -967,6 +1010,30 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
           >
             <Sliders className="w-3.5 h-3.5 inline mr-1" />
             Faceted Trait Search
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveMainTab('scraper')}
+            className={`px-3 py-1.5 rounded-lg text-[9px] font-bold font-mono uppercase tracking-wider transition-all cursor-pointer ${
+              activeMainTab === 'scraper'
+                ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-300'
+                : 'text-gray-500 hover:text-white'
+            }`}
+          >
+            <RefreshCw className="w-3.5 h-3.5 inline mr-1" />
+            Autonomous Scraper
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveMainTab('platform')}
+            className={`px-3 py-1.5 rounded-lg text-[9px] font-bold font-mono uppercase tracking-wider transition-all cursor-pointer ${
+              activeMainTab === 'platform'
+                ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-300'
+                : 'text-gray-500 hover:text-white'
+            }`}
+          >
+            <LineChart className="w-3.5 h-3.5 inline mr-1" />
+            Genetics Platform
           </button>
         </div>
       </div>
@@ -1579,16 +1646,231 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
             </div>
           )}
 
+          {/* VIEW D: AUTONOMOUS STRAIN SCRAPER */}
+          {activeMainTab === 'scraper' && (
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between border-b border-[#1f1f21] pb-4">
+                <div>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono flex items-center gap-1.5">
+                    <RefreshCw className="w-4 h-4 text-emerald-400" /> Autonomous Strain Ingestion Engine
+                  </h3>
+                  <p className="text-[8.5px] font-mono text-gray-500 uppercase mt-0.5">Scrape and ingest thousands of strain crossbreeds & profiles</p>
+                </div>
+              </div>
+
+              <div className="bg-[#121214] border border-[#1f1f21] rounded-2xl p-5 space-y-5">
+                {/* Scraper Configuration */}
+                <div className="space-y-3">
+                  <h4 className="text-[10px] font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2 border-b border-[#1f1f21] pb-2">
+                    <Database className="w-3.5 h-3.5 text-blue-400" /> Web Scraper Configuration
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[8px] font-mono text-gray-500 uppercase font-bold tracking-widest">Target Database</label>
+                      <select 
+                        value={scrapeTarget}
+                        onChange={(e) => setScrapeTarget(e.target.value)}
+                        className="w-full bg-[#0d0d0f] border border-[#1f1f21] rounded p-2 text-[9px] text-white font-mono focus:border-emerald-500 focus:outline-none transition-colors"
+                      >
+                        <option>Leafly API / DOM</option>
+                        <option>SeedFinder Registry</option>
+                        <option>AllBud Index</option>
+                        <option>Hytiva Logs</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[8px] font-mono text-gray-500 uppercase font-bold tracking-widest">Query Vector</label>
+                      <input 
+                        type="text" 
+                        value={scrapeQuery}
+                        onChange={(e) => setScrapeQuery(e.target.value)}
+                        placeholder="e.g. 'Haze Crossbreeds'" 
+                        className="w-full bg-[#0d0d0f] border border-[#1f1f21] rounded p-2 text-[9px] text-white font-mono focus:border-emerald-500 focus:outline-none transition-colors" 
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[8px] font-mono text-gray-500 uppercase font-bold tracking-widest">Rate Limit (req/s)</label>
+                      <select className="w-full bg-[#0d0d0f] border border-[#1f1f21] rounded p-2 text-[9px] text-white font-mono focus:border-emerald-500 focus:outline-none transition-colors">
+                        <option>10 req/s (Standard)</option>
+                        <option>50 req/s (Aggressive)</option>
+                        <option>1 req/s (Stealth)</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[8px] font-mono text-gray-500 uppercase font-bold tracking-widest">Proxy Mode</label>
+                      <select className="w-full bg-[#0d0d0f] border border-[#1f1f21] rounded p-2 text-[9px] text-white font-mono focus:border-emerald-500 focus:outline-none transition-colors">
+                        <option>Rotating Residential</option>
+                        <option>Datacenter Static</option>
+                        <option>Direct (Local IP)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <button className="px-4 py-2 bg-[#0d0d0f] hover:bg-[#1a1a1c] border border-[#1f1f21] text-gray-400 text-[9px] font-mono font-bold uppercase tracking-widest rounded-lg transition-all">
+                    Dry Run Test
+                  </button>
+                  <button 
+                    onClick={handleStartScraping}
+                    disabled={isScraping}
+                    className="px-5 py-2 bg-emerald-950/40 hover:bg-emerald-900 border border-emerald-500/30 text-emerald-400 text-[9px] font-mono font-bold uppercase tracking-widest rounded-lg transition-all flex items-center gap-1.5 shadow"
+                  >
+                    {isScraping ? (
+                      <RefreshCw className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+                    ) : (
+                      <Play className="w-3.5 h-3.5 fill-emerald-400 text-emerald-400" />
+                    )}
+                    {isScraping ? 'Swarm Active...' : 'Initialize Ingestion Swarm'}
+                  </button>
+                </div>
+
+                {/* Scraper Console output */}
+                <div className="bg-[#050506] border border-[#1c1c1f] rounded-xl p-3 font-mono text-[9px] h-[200px] overflow-y-auto space-y-1 text-gray-400">
+                  <span className="text-[7.5px] text-emerald-500 uppercase tracking-wider font-bold block border-b border-[#1c1c1f]/50 pb-1 mb-2">
+                    // SCRAPER SWARM TERMINAL
+                  </span>
+                  {scrapeLogs.length === 0 ? (
+                    <div className="text-gray-600 italic uppercase text-center mt-6">Swarm idle. Configure parameters and execute initialization.</div>
+                  ) : (
+                    scrapeLogs.map((log, idx) => (
+                      <div key={idx} className={log.includes('✔️') ? 'text-emerald-400 font-bold' : 'text-gray-300'}>
+                        {log}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW E: GENETICS ANALYTICS PLATFORM */}
+          {activeMainTab === 'platform' && (
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between border-b border-[#1f1f21] pb-4">
+                <div>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono flex items-center gap-1.5">
+                    <LineChart className="w-4 h-4 text-emerald-400" /> Breeding & Genetics Analytics Platform
+                  </h3>
+                  <p className="text-[8.5px] font-mono text-gray-500 uppercase mt-0.5">Tie genotype, phenotype, environment, and process outcomes</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Strain/Genotype Registry */}
+                <div className="bg-[#121214] border border-[#1f1f21] p-4 rounded-xl space-y-3">
+                  <h4 className="text-[10px] font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+                    <Database className="w-3.5 h-3.5 text-blue-400" /> Genotype Registry
+                  </h4>
+                  <p className="text-[8px] text-gray-400 font-mono">1,244 Active Cultivars Tracked</p>
+                  <div className="space-y-2">
+                    {['Blue Dream F2 x Haze', 'OG Kush x Sour Diesel', 'Granddaddy Purple V4'].map((strain, i) => (
+                      <div key={i} className="bg-[#0b0b0c] border border-[#1f1f21] p-2 rounded flex justify-between items-center">
+                        <span className="text-[9px] text-gray-300 font-mono">{strain}</span>
+                        <span className="text-[8px] text-emerald-400 font-bold border border-emerald-500/30 px-1 rounded bg-emerald-950/20">Gen {i + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Phenotype Tracking */}
+                <div className="bg-[#121214] border border-[#1f1f21] p-4 rounded-xl space-y-3">
+                  <h4 className="text-[10px] font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+                    <Activity className="w-3.5 h-3.5 text-rose-400" /> Phenotype Outcomes
+                  </h4>
+                  <p className="text-[8px] text-gray-400 font-mono">Yield, Cannabinoids & Resilience tracking</p>
+                  <div className="h-[100px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                        { subject: 'Yield', A: 80, B: 60, fullMark: 100 },
+                        { subject: 'THC', A: 90, B: 85, fullMark: 100 },
+                        { subject: 'Resilience', A: 60, B: 90, fullMark: 100 },
+                        { subject: 'Terpenes', A: 70, B: 65, fullMark: 100 },
+                        { subject: 'Flowering', A: 85, B: 75, fullMark: 100 }
+                      ]}>
+                        <PolarGrid stroke="#1f1f21" />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#555', fontSize: 8 }} />
+                        <Radar name="Genotype A" dataKey="A" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+                        <Radar name="Genotype B" dataKey="B" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.2} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Environment Logging */}
+                <div className="bg-[#121214] border border-[#1f1f21] p-4 rounded-xl space-y-3">
+                  <h4 className="text-[10px] font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+                    <Thermometer className="w-3.5 h-3.5 text-amber-400" /> Cultivation Environment
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-[#0b0b0c] border border-[#1f1f21] p-2 rounded">
+                      <div className="text-[8px] text-gray-500 font-mono uppercase">VPD (kPa)</div>
+                      <div className="text-[12px] text-amber-400 font-bold font-mono">1.15</div>
+                    </div>
+                    <div className="bg-[#0b0b0c] border border-[#1f1f21] p-2 rounded">
+                      <div className="text-[8px] text-gray-500 font-mono uppercase">Avg Temp (C)</div>
+                      <div className="text-[12px] text-emerald-400 font-bold font-mono">24.5</div>
+                    </div>
+                    <div className="bg-[#0b0b0c] border border-[#1f1f21] p-2 rounded">
+                      <div className="text-[8px] text-gray-500 font-mono uppercase">Light DLI</div>
+                      <div className="text-[12px] text-blue-400 font-bold font-mono">45.2</div>
+                    </div>
+                    <div className="bg-[#0b0b0c] border border-[#1f1f21] p-2 rounded">
+                      <div className="text-[8px] text-gray-500 font-mono uppercase">Soil EC</div>
+                      <div className="text-[12px] text-purple-400 font-bold font-mono">2.1</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Analytics & Lab Integration */}
+                <div className="bg-[#121214] border border-[#1f1f21] p-4 rounded-xl space-y-3">
+                  <h4 className="text-[10px] font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+                    <CheckCircle className="w-3.5 h-3.5 text-teal-400" /> Lab & Simulation Integration
+                  </h4>
+                  <p className="text-[8px] text-gray-400 font-mono">Link genetics → outcomes → products</p>
+                  <div className="space-y-2">
+                    <button className="w-full text-left bg-[#0b0b0c] hover:bg-[#1a1a1c] border border-[#1f1f21] p-2 rounded flex justify-between items-center transition-colors">
+                      <span className="text-[9px] text-gray-300 font-mono">Pull HPLC Results (Agilent)</span>
+                      <FileDown className="w-3 h-3 text-gray-500" />
+                    </button>
+                    <button className="w-full text-left bg-[#0b0b0c] hover:bg-[#1a1a1c] border border-[#1f1f21] p-2 rounded flex justify-between items-center transition-colors">
+                      <span className="text-[9px] text-gray-300 font-mono">Run Yield Prediction Sim</span>
+                      <Play className="w-3 h-3 text-emerald-400" />
+                    </button>
+                    <button className="w-full text-left bg-[#0b0b0c] hover:bg-[#1a1a1c] border border-[#1f1f21] p-2 rounded flex justify-between items-center transition-colors">
+                      <span className="text-[9px] text-gray-300 font-mono">Submit to Peer Review</span>
+                      <Users className="w-3 h-3 text-purple-400" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* ==========================================
             RIGHT PANEL: CROSSBREED F1 SIMULATION LAB
             ========================================== */}
         <div className="xl:col-span-5 p-6 bg-[#0c0c0e]/40 space-y-5">
-          <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono flex items-center gap-1.5 border-b border-[#1f1f21] pb-3">
-            <GitMerge className="w-4 h-4 text-emerald-400 animate-spin-slow" />
-            Crossbreed Gene Machine
-          </h3>
+          <div className="flex items-center justify-between border-b border-[#1f1f21] pb-3">
+            <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <GitMerge className="w-4 h-4 text-emerald-400 animate-spin-slow" />
+              Crossbreed Gene Machine
+            </h3>
+            <button
+              type="button"
+              onClick={() => {
+                setParentAId('s_05'); // GMO
+                setParentBId('s_07'); // Lifter
+                setNewBreedName('Copilot GMO-Lift');
+              }}
+              className="flex items-center gap-1 text-[8px] font-bold tracking-widest text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded border border-purple-500/30 hover:bg-purple-900/40 transition-colors"
+            >
+              <Sparkles className="w-3 h-3" />
+              COPILOT GENETICS
+            </button>
+          </div>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3.5">

@@ -118,11 +118,19 @@ export interface DistillationRunOutput {
 }
 
 // Workflow types
+export interface OperatorVersion {
+  versionId: string;
+  releasedAt: string;
+  calibrationDrift: number; // typical calibration drift %
+  uncertaintyMargin: number; // base uncertainty margin +/- %
+}
+
 export interface ProcessStage {
   id: string;
   name: string;
   type: 'extraction' | 'decarboxylation' | 'winterization' | 'distillation';
   modelId: string;
+  operatorVersion?: OperatorVersion; // versioned operators
   config: Record<string, any>;
 }
 
@@ -131,12 +139,36 @@ export interface ProcessGraph {
   connections: Array<{ from: string; to: string }>;
 }
 
+export interface SensitivityAnalysis {
+  param: string;
+  impactMagnitude: number; // e.g. how much +/- 10% param affects yield
+}
+
+export interface EnergyBalance {
+  energyConsumedKWh: number;
+  thermalEnergyKWh: number;
+  mechanicalEnergyKWh: number;
+}
+
+export interface RunManifest {
+  runId: string;
+  timestamp: string;
+  graphSnapshot: ProcessGraph;
+  biomassSnapshot: Biomass;
+  kernelVersion: string;
+  environment: 'local' | 'cloud';
+}
+
 export interface ProcessRunResult {
+  manifest: RunManifest;
   stagesResults: Record<string, any>; // maps stage.id -> execution output
   massBalanceReport: {
     initialMassKg: number;
     finalMassKg: number;
     massLossKg: number;
     massBalanceCheckPass: boolean;
+    uncertainty: number; // combined uncertainty across stages
   };
+  energyBalanceReport: EnergyBalance;
+  sensitivity: SensitivityAnalysis[];
 }

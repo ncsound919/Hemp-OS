@@ -89,9 +89,12 @@ export function DataProvenance({ history, onClearHistory, onApplyConfig }: DataP
         <div className="flex items-center gap-2">
           <Database className="w-5 h-5 text-blue-500" />
           <div>
-            <h2 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">
-              Data & Provenance Layer
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">
+                Data & Provenance Layer
+              </h2>
+              <span className="text-[8px] bg-blue-900/40 text-blue-300 border border-blue-500/30 px-1 py-0.5 rounded font-mono font-bold tracking-widest">[DETERMINISTIC KERNEL]</span>
+            </div>
             <p className="text-[10px] text-[#555] font-mono mt-0.5">
               Lineage Auditing, Multi-Run Ledger & Determinism Verification
             </p>

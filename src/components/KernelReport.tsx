@@ -40,6 +40,7 @@ export const KernelReport: React.FC = () => {
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-blue-400" />
           <h3 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">KERNEL INTEGRITY REPORT</h3>
+          <span className="ml-2 text-[9px] bg-blue-900/40 text-blue-300 border border-blue-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">[DETERMINISTIC KERNEL]</span>
         </div>
         <button
           type="button"
