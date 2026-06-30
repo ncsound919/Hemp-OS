@@ -71,8 +71,8 @@ export const ScientificDiscoveryPublisher: React.FC<ScientificDiscoveryPublisher
   // Extraction Yield summary stats
   const calculatedYield = results?.results?.stages?.[results?.results?.stages?.length - 1]?.metrics?.yieldFraction ?? 0.82;
   const purityVal = results?.results?.stages?.[results?.results?.stages?.length - 1]?.metrics?.purityFraction ?? 0.84;
-  const totalWeightInGrams = 1000 * biomass.quantityKg;
-  const outputProductKg = (biomass.quantityKg * calculatedYield * purityVal).toFixed(3);
+  const totalWeightInGrams = 1000 * biomass.mass;
+  const outputProductKg = (biomass.mass * calculatedYield * purityVal).toFixed(3);
 
   const handleCopySlogan = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -242,7 +242,7 @@ export const ScientificDiscoveryPublisher: React.FC<ScientificDiscoveryPublisher
                       </tr>
                       <tr className="border-b border-gray-100">
                         <td className="py-1">Total Input Mass</td>
-                        <td className="py-1 text-right font-semibold">{biomass.quantityKg} kg</td>
+                        <td className="py-1 text-right font-semibold">{biomass.mass} kg</td>
                       </tr>
                       <tr className="border-b border-gray-100">
                         <td className="py-1">Predicted Extraction Yield</td>

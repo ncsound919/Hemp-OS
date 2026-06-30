@@ -25,9 +25,10 @@ import { ScientificSuperSystems } from './components/ScientificSuperSystems.tsx'
 import { StrainBreedLab } from './components/StrainBreedLab.tsx';
 import { IngestionHub } from './components/IngestionHub.tsx';
 import { ScientificDiscoveryPublisher } from './components/ScientificDiscoveryPublisher.tsx';
+import { WindowsIntegrationLayer } from './components/WindowsIntegrationLayer.tsx';
 import { 
   Play, Sparkles, ShieldCheck, Activity, ChevronRight, HelpCircle, AlertCircle, Database, Cpu, Layers, Terminal, FolderGit2, Boxes, Dna, FileSearch,
-  ArrowDown, Compass, Sliders, TrendingUp, Newspaper, FileText, Info
+  ArrowDown, Compass, Sliders, TrendingUp, Newspaper, FileText, Info, Laptop
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -175,7 +176,7 @@ export default function App() {
   };
 
   // Multiplexing OS Layers State
-  const [activeTab, setActiveTab] = useState<'kernel' | 'orchestration' | 'provenance' | 'autonomy' | 'corpus' | 'reflexive' | 'interface' | 'plugins' | 'autonomy_engine' | 'scientific_supersystems' | 'strain_lab' | 'ingestion_hub'>('kernel');
+  const [activeTab, setActiveTab] = useState<'kernel' | 'orchestration' | 'provenance' | 'autonomy' | 'corpus' | 'reflexive' | 'interface' | 'plugins' | 'autonomy_engine' | 'scientific_supersystems' | 'strain_lab' | 'ingestion_hub' | 'windows_integration'>('kernel');
 
   // Shared Google Drive / Firebase Auth State
   const [user, setUser] = useState<any>(null);
@@ -328,6 +329,7 @@ export default function App() {
             { id: 'scientific_supersystems', label: 'Layer 9: Scientific Super-Systems', desc: '12 Unified Deterministic Engines', icon: Boxes, color: 'text-cyan-400' },
             { id: 'strain_lab', label: 'Layer 10: Strain Breed Lab', desc: 'Genetic Mapping & Crossbreed Sim', icon: Dna, color: 'text-emerald-400' },
             { id: 'ingestion_hub', label: 'Layer 11: Ingestion & Analysis Hub', desc: 'OCR CoA, Kaggle & Academic Feeds', icon: FileSearch, color: 'text-blue-400' },
+            { id: 'windows_integration', label: 'Layer 12: Windows System Interop', desc: 'Copilot, Services, PowerShell & VSS', icon: Laptop, color: 'text-blue-500' },
           ].map((layer) => {
             const Icon = layer.icon;
             const isSelected = activeTab === layer.id;
@@ -401,7 +403,7 @@ export default function App() {
                   <div className="bg-[#0a0a0b] p-3 rounded-xl border border-[#1f1f21] font-mono text-[9px] text-gray-500 space-y-2">
                     <span className="font-bold text-white uppercase tracking-wider block">Feedstock Specs</span>
                     <div>• Active Strain: <span className="text-emerald-400 font-bold">{biomass.name}</span></div>
-                    <div>• Input Quantity: <span className="text-white">{biomass.quantityKg} kg</span></div>
+                    <div>• Input Quantity: <span className="text-white">{biomass.mass} kg</span></div>
                     <div>• THCA Potency: <span className="text-white">{biomass.potency.thca}%</span></div>
                     <div>• CBDA Potency: <span className="text-white">{biomass.potency.cbda}%</span></div>
                   </div>
@@ -840,6 +842,7 @@ export default function App() {
           >
             <StrainBreedLab
               activeBiomassName={biomass.name}
+              accessToken={accessToken}
               onApplyBiomass={(potency, name) => {
                 setBiomass((prev) => ({
                   ...prev,
@@ -884,6 +887,25 @@ export default function App() {
                 setActiveTab('kernel');
               }}
               onAddResearchArticle={handleAddResearchArticle}
+            />
+          </motion.div>
+        )}
+
+        {activeTab === 'windows_integration' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <WindowsIntegrationLayer
+              biomass={biomass}
+              setBiomass={setBiomass}
+              graph={graph}
+              setGraph={setGraph}
+              activeStageId={activeStageId}
+              setActiveStageId={setActiveStageId}
+              runSimulation={runSimulation}
+              accessToken={accessToken}
             />
           </motion.div>
         )}
