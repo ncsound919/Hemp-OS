@@ -38,7 +38,7 @@ export function ScientificSuperSystems() {
         'Verify thermodynamic formulas symbolically',
         'Generate analytical bounds for safe heating states'
       ],
-      description: 'Enables HempForge to perform rigorous analytical calculus and algebraic simplifications to guarantee structural validity of models before running numerical approximations.'
+      description: 'Enables Hemp-OS to perform rigorous analytical calculus and algebraic simplifications to guarantee structural validity of models before running numerical approximations.'
     },
     {
       id: 'solvers',
@@ -252,6 +252,7 @@ by
   // 12. Distributed cluster simulation
   const [nodeLoads, setNodeLoads] = useState<number[]>([12, 18, 5, 8]);
   const [isClusterRunning, setIsClusterRunning] = useState(false);
+  const [isAdvancedMode, setIsAdvancedMode] = useState(false);
 
   // Run Numerical Solver RK4 locally
   const runODESolver = () => {
@@ -380,8 +381,11 @@ by
             Deterministic calculation grids, algebraic compilers, and formal provers
           </p>
         </div>
-        <div className="text-[10px] font-mono text-gray-400 border border-emerald-500/20 bg-emerald-950/10 px-3 py-1.5 rounded-xl uppercase">
-          Zero Stochastic Guesswork Mode
+        <div className="text-[10px] font-mono text-gray-400 border border-emerald-500/20 bg-emerald-950/10 px-3 py-1.5 rounded-xl uppercase flex items-center gap-2">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={isAdvancedMode} onChange={() => setIsAdvancedMode(!isAdvancedMode)} className="accent-emerald-500" />
+            <span>Advanced Mode: {isAdvancedMode ? 'ON' : 'OFF'}</span>
+          </label>
         </div>
       </div>
 
@@ -469,7 +473,7 @@ by
 
                     <div className="p-4 bg-[#121214] border border-[#1f1f21] rounded-xl space-y-2">
                       <h4 className="text-[9px] font-mono text-gray-500 uppercase tracking-widest font-bold">
-                        HempForge Integration Capabilities
+                        Hemp-OS Integration Capabilities
                       </h4>
                       <ul className="text-[9.5px] text-gray-400 space-y-1 font-sans">
                         {sub.capabilities.map((cap, i) => (
@@ -879,7 +883,7 @@ by
                         Subsystem Active & Running
                       </div>
                       <p className="text-gray-400 leading-relaxed">
-                        This system operates in HempForge OS background threads, ensuring flawless execution, snapshotting, compile isolation, or code integrity validation before running any visual experiment blocks.
+                        This system operates in Hemp-OS background threads, ensuring flawless execution, snapshotting, compile isolation, or code integrity validation before running any visual experiment blocks.
                       </p>
                       <div className="p-3 bg-[#0d0d0f] border border-[#1c1c1f] rounded-xl text-emerald-400 flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />

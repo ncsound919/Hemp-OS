@@ -365,7 +365,7 @@ app.post('/api/drive/ingest', async (req, res) => {
       },
       text: extractedText,
       chapters,
-      citations: citations.length > 0 ? citations : ['[HempForge Research, 2026]', '[Standard Phytochem, 2023]'],
+      citations: citations.length > 0 ? citations : ['[Hemp-OS Research, 2026]', '[Standard Phytochem, 2023]'],
       indexedTopics: ['Winterization', 'Supercritical CO2', 'Thermodynamics', 'Arrhenius Kinetics', 'Solvent Residuals']
     });
 
@@ -393,7 +393,7 @@ app.post('/api/ai/assist', async (req, res) => {
 
   try {
     // Inject process state context so the AI can give precise, relevant assistance
-    const systemInstruction = `You are HempForge AI, a chemical engineering and phytocannabinoid extraction assistant. 
+    const systemInstruction = `You are Hemp-OS AI, a chemical engineering and phytocannabinoid extraction assistant. 
 Your role is to help users design workflows, choose ideal parameters, and interpret simulation outputs.
 You operate outside the deterministic science kernel. You NEVER compute numeric yields or equations yourself. 
 Instead, you analyze the user's configurations and simulated results to provide optimization guidance.
@@ -451,7 +451,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`HempForge full-stack server active on port ${PORT}`);
+    console.log(`Hemp-OS full-stack server active on port ${PORT}`);
   });
 }
 

@@ -70,7 +70,7 @@ export const ProcessVisualizer: React.FC<ProcessVisualizerProps> = ({
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-blue-500 animate-pulse" />
           <h2 className="font-bold text-xs uppercase tracking-wider text-[#aaa]">
-            HempForge Flowsheet Pipeline
+            Hemp-OS Flowsheet Pipeline
           </h2>
         </div>
         <span className="text-[9px] font-mono font-bold bg-[#1a1a1c] text-blue-400 border border-[#2d2d30] px-2.5 py-0.5 rounded-full tracking-wider uppercase">

@@ -757,7 +757,7 @@ export function ReflexiveOS() {
                     </span>
                   </div>
                   <p className="text-[9.5px] text-[#777] font-sans leading-relaxed">
-                    By targeting the mechanisms of improvement themselves, HempForge adapts not just the model values, but the speed, temperature, and lipid filtration heuristics dynamically. This ensures that when the chemical model meets complex strains, it automatically discovers superior extraction routes without losing safety or thermodynamic control.
+                    By targeting the mechanisms of improvement themselves, Hemp-OS adapts not just the model values, but the speed, temperature, and lipid filtration heuristics dynamically. This ensures that when the chemical model meets complex strains, it automatically discovers superior extraction routes without losing safety or thermodynamic control.
                   </p>
                 </div>
               </div>

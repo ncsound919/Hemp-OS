@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// HempForge Kernel: Units and Conversion Library (Strictly Deterministic)
+// Hemp-OS Kernel: Units and Conversion Library (Strictly Deterministic)
 
 export type MassUnit = 'kg' | 'g' | 'lb';
 export type VolumeUnit = 'L' | 'mL' | 'gal';

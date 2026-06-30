@@ -184,7 +184,7 @@ export default function App() {
 
   // Data Provenance Ledger State
   const [history, setHistory] = useState<ProvenanceRecord[]>(() => {
-    const stored = localStorage.getItem('hempforge_provenance_ledger');
+    const stored = localStorage.getItem('hempos_provenance_ledger');
     return stored ? JSON.parse(stored) : [];
   });
 
@@ -200,14 +200,14 @@ export default function App() {
     };
     setHistory((prev) => {
       const next = [record, ...prev].slice(0, 50); // cap ledger logs at 50 records
-      localStorage.setItem('hempforge_provenance_ledger', JSON.stringify(next));
+      localStorage.setItem('hempos_provenance_ledger', JSON.stringify(next));
       return next;
     });
   };
 
   const handleClearHistory = () => {
     setHistory([]);
-    localStorage.removeItem('hempforge_provenance_ledger');
+    localStorage.removeItem('hempos_provenance_ledger');
   };
 
   // Get active stage object
@@ -886,6 +886,10 @@ export default function App() {
                 setActiveTab('kernel');
               }}
               onAddResearchArticle={handleAddResearchArticle}
+              onApplyKaggleCalibration={(data) => {
+                console.log('Kaggle calibration applied to pipeline:', data);
+                // Pipeline update logic would go here
+              }}
             />
           </motion.div>
         )}

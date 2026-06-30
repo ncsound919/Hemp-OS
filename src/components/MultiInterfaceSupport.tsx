@@ -16,7 +16,7 @@ export function MultiInterfaceSupport() {
   // --- TERMINAL CLI STATE ---
   const [terminalInput, setTerminalInput] = useState('');
   const [terminalHistory, setTerminalHistory] = useState<CommandLine[]>([
-    { type: 'output', text: 'HempForge(TM) CommandLine Interface [v2.4.0-LTS]' },
+    { type: 'output', text: 'Hemp-OS(TM) CommandLine Interface [v2.4.0-LTS]' },
     { type: 'output', text: 'Type "help" to display all available system commands.' },
     { type: 'output', text: 'Status: Connected to Compute Substrate (localhost:3000)' },
     { type: 'output', text: ' ' }
@@ -40,12 +40,12 @@ export function MultiInterfaceSupport() {
     switch (primary) {
       case 'help':
         newHistory.push(
-          { type: 'output', text: 'Available HempForge Commands:' },
-          { type: 'output', text: '  hempforge run <stage>     - Execute individual process stages (extraction, winterization, decarb)' },
-          { type: 'output', text: '  hempforge systemctl       - Manage background services (watchdog, scheduler, daemon)' },
-          { type: 'output', text: '  hempforge plugins         - Display loaded plugins and active scientific models' },
-          { type: 'output', text: '  hempforge node status     - View local and remote computing cluster metrics' },
-          { type: 'output', text: '  hempforge batch --sweep   - Launch headless parallel parameter batch processing' },
+          { type: 'output', text: 'Available Hemp-OS Commands:' },
+          { type: 'output', text: '  hemp-os run <stage>     - Execute individual process stages (extraction, winterization, decarb)' },
+          { type: 'output', text: '  hemp-os systemctl       - Manage background services (watchdog, scheduler, daemon)' },
+          { type: 'output', text: '  hemp-os plugins         - Display loaded plugins and active scientific models' },
+          { type: 'output', text: '  hemp-os node status     - View local and remote computing cluster metrics' },
+          { type: 'output', text: '  hemp-os batch --sweep   - Launch headless parallel parameter batch processing' },
           { type: 'output', text: '  clear                     - Reset the shell terminal display' }
         );
         break;
@@ -53,7 +53,7 @@ export function MultiInterfaceSupport() {
         setTerminalHistory([]);
         setTerminalInput('');
         return;
-      case 'hempforge':
+      case 'hemp-os':
         const subAction = args[1]?.toLowerCase();
         if (subAction === 'run') {
           const stage = args[2]?.toLowerCase() || 'extraction';
@@ -65,13 +65,13 @@ export function MultiInterfaceSupport() {
           const statusAction = args[2]?.toLowerCase() || 'status';
           if (statusAction === 'status') {
             newHistory.push(
-              { type: 'output', text: '● hempforge.service - HempForge Lab Brain Control Daemon' },
-              { type: 'output', text: '   Loaded: loaded (/etc/systemd/system/hempforge.service; enabled)' },
+              { type: 'output', text: '● hemp-os.service - Hemp-OS Lab Brain Control Daemon' },
+              { type: 'output', text: '   Loaded: loaded (/etc/systemd/system/hemp-os.service; enabled)' },
               { type: 'success', text: '   Active: active (running) since Tue 2026-06-30 08:12:44 UTC' },
-              { type: 'output', text: '   Main PID: 24419 (hempforge-brain)' },
+              { type: 'output', text: '   Main PID: 24419 (hemp-os-brain)' },
               { type: 'output', text: '   Tasks: 44 (limit: 4915)' },
-              { type: 'output', text: '   CGroup: /system.slice/hempforge.service' },
-              { type: 'output', text: '           └─24419 /usr/bin/hempforge-brain --headless --watchdog=enabled' }
+              { type: 'output', text: '   CGroup: /system.slice/hemp-os.service' },
+              { type: 'output', text: '           └─24419 /usr/bin/hemp-os-brain --headless --watchdog=enabled' }
             );
           } else {
             newHistory.push({ type: 'output', text: `Executing systemctl ${statusAction} on services...` });
@@ -97,7 +97,7 @@ export function MultiInterfaceSupport() {
             { type: 'success', text: '[BATCH SUCCESS] 1,000 executions finished in 0.42 seconds. Optimized point found at 75 bar, -12°C.' }
           );
         } else {
-          newHistory.push({ type: 'error', text: `Unknown hempforge subcommand: "${subAction || ''}". Type "help" for support.` });
+          newHistory.push({ type: 'error', text: `Unknown hemp-os subcommand: "${subAction || ''}". Type "help" for support.` });
         }
         break;
       default:
@@ -159,7 +159,7 @@ export function MultiInterfaceSupport() {
 
   const copyCurl = () => {
     const curl = `curl -X ${apiMethod} \\
-  https://hempforge.local${apiEndpoint} \\
+  https://hempos.local${apiEndpoint} \\
   -H "Authorization: Bearer oauth-token-key" \\
   -H "Content-Type: application/json"`;
     navigator.clipboard.writeText(curl);
@@ -227,7 +227,7 @@ export function MultiInterfaceSupport() {
           <div className="flex items-center gap-2 mb-1">
             <span className="h-2 w-2 rounded-full bg-[#38bdf8]" />
             <h2 className="text-sm font-bold text-white uppercase tracking-widest font-mono">
-              HempForge Multi-Interface Gateway <span className="text-[#666] font-normal italic">Layer 6</span>
+              Hemp-OS Multi-Interface Gateway <span className="text-[#666] font-normal italic">Layer 6</span>
             </h2>
           </div>
           <p className="text-[10px] text-gray-500 font-mono tracking-tight uppercase">
@@ -304,12 +304,12 @@ export function MultiInterfaceSupport() {
 
                 {/* Command Input Prompt */}
                 <form onSubmit={handleCommandSubmit} className="flex border-t border-[#1a1a1c] pt-3 mt-3 items-center gap-2">
-                  <span className="text-[#38bdf8] font-bold shrink-0">HempForge $</span>
+                  <span className="text-[#38bdf8] font-bold shrink-0">Hemp-OS $</span>
                   <input
                     type="text"
                     value={terminalInput}
                     onChange={(e) => setTerminalInput(e.target.value)}
-                    placeholder="Try 'hempforge run winterization' or 'help'..."
+                    placeholder="Try 'hemp-os run winterization' or 'help'..."
                     className="flex-1 bg-transparent border-none text-white focus:outline-none placeholder-gray-600 font-mono text-[11px]"
                     autoFocus
                   />
@@ -325,21 +325,21 @@ export function MultiInterfaceSupport() {
                 <div className="flex gap-2 flex-wrap">
                   <button
                     type="button"
-                    onClick={() => setTerminalInput('hempforge run decarb')}
+                    onClick={() => setTerminalInput('hemp-os run decarb')}
                     className="px-2.5 py-1 bg-[#1b1b1e] hover:bg-[#25252a] border border-[#2d2d30] hover:border-[#38bdf8]/40 text-gray-300 text-[8.5px] font-mono rounded cursor-pointer transition-all"
                   >
                     Quick Run Decarb
                   </button>
                   <button
                     type="button"
-                    onClick={() => setTerminalInput('hempforge plugins')}
+                    onClick={() => setTerminalInput('hemp-os plugins')}
                     className="px-2.5 py-1 bg-[#1b1b1e] hover:bg-[#25252a] border border-[#2d2d30] hover:border-[#38bdf8]/40 text-gray-300 text-[8.5px] font-mono rounded cursor-pointer transition-all"
                   >
                     Show Loaded Driver Plugins
                   </button>
                   <button
                     type="button"
-                    onClick={() => setTerminalInput('hempforge systemctl')}
+                    onClick={() => setTerminalInput('hemp-os systemctl')}
                     className="px-2.5 py-1 bg-[#1b1b1e] hover:bg-[#25252a] border border-[#2d2d30] hover:border-[#38bdf8]/40 text-gray-300 text-[8.5px] font-mono rounded cursor-pointer transition-all"
                   >
                     Service Status systemd
@@ -362,7 +362,7 @@ export function MultiInterfaceSupport() {
               <div className="lg:col-span-5 space-y-4">
                 <div className="bg-[#121214] border border-[#1f1f21] rounded-xl p-4 space-y-4">
                   <h3 className="text-[10px] font-bold text-white uppercase tracking-widest font-mono border-b border-[#1f1f21] pb-2.5">
-                    HempForge REST API Gateway
+                    Hemp-OS REST API Gateway
                   </h3>
 
                   <div className="space-y-2">
@@ -401,7 +401,7 @@ export function MultiInterfaceSupport() {
                   <div className="bg-[#0b0b0c] border border-[#1c1c1f] rounded-xl p-3 relative font-mono text-[9px] text-gray-400">
                     <span className="text-[7.5px] text-[#555] font-mono block mb-2 uppercase tracking-wider">Shell curl request equivalent:</span>
                     <pre className="overflow-x-auto text-sky-300 leading-relaxed">
-                      {`curl -X ${apiMethod} \\\n  https://hempforge.local${apiEndpoint} \\\n  -H "Authorization: Bearer test_key"`}
+                      {`curl -X ${apiMethod} \\\n  https://hempos.local${apiEndpoint} \\\n  -H "Authorization: Bearer test_key"`}
                     </pre>
                     <button
                       type="button"
@@ -471,7 +471,7 @@ export function MultiInterfaceSupport() {
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-[#1f1f21] text-[8px] text-gray-500 font-mono uppercase tracking-wider leading-relaxed">
-                    *HempForge REST router is fully documented with Swagger/OAS formats at /api/docs (Headless Mode Enabled).
+                    *Hemp-OS REST router is fully documented with Swagger/OAS formats at /api/docs (Headless Mode Enabled).
                   </div>
                 </div>
               </div>
@@ -635,7 +635,7 @@ export function MultiInterfaceSupport() {
               <div className="lg:col-span-7">
                 <div className="bg-[#121214] border border-[#1f1f21] rounded-xl p-4 space-y-3">
                   <h3 className="text-[10px] font-bold text-white uppercase tracking-widest font-mono border-b border-[#1f1f21] pb-2.5">
-                    HempForge Decentralized Cluster Topology ({nodes.length} Nodes)
+                    Hemp-OS Decentralized Cluster Topology ({nodes.length} Nodes)
                   </h3>
 
                   <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">

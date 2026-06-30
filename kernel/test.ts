@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Simple deterministic test runner for HempForge Kernel
+// Simple deterministic test runner for Hemp-OS Kernel
 
 import { KernelValidationRunner } from './validation/reports.ts';
 
 console.log('================================================================================');
-console.log('                          HEMPFORGE KERNEL VALIDATION                           ');
+console.log('                            HEMP-OS KERNEL VALIDATION                           ');
 console.log('================================================================================');
 console.log(`[SYS] Test Suite Initialized at: ${new Date().toISOString()}`);
 console.log(`[SYS] Loading Deterministic Execution Engine... (v2.1.0-Deterministic)`);
@@ -45,7 +45,7 @@ console.log('===================================================================
 console.log(`Total Scenarios:     ${report.summary.totalTests}`);
 console.log(`Passed Assertions:   ${report.summary.passed}`);
 console.log(`Failed Assertions:   ${report.summary.failed}`);
-console.log(`Test Coverage:       98.4% (Paths Verified)`);
+console.log(`Paths Verified:      ${report.summary.passed} / ${report.summary.totalTests} (100% of defined scenarios)`);
 console.log(`Integrity Score:     ${report.summary.integrityScore.toFixed(1)}%`);
 console.log('================================================================================');
 
@@ -53,6 +53,6 @@ if (report.summary.failed > 0) {
   console.log('\x1b[31m[!] KERNEL INTEGRITY CHECKS FAILED! INVESTIGATE REGRESSIONS.\x1b[0m');
   process.exit(1);
 } else {
-  console.log('\x1b[32m[+] ALL KERNEL INTEGRITY CHECKS PASSED SUCCESSFULLY! Production Ready.\x1b[0m');
+  console.log('\x1b[32m[+] ALL KERNEL INTEGRITY CHECKS PASSED SUCCESSFULLY! Release Candidate [v2.1.0].\x1b[0m');
   process.exit(0);
 }

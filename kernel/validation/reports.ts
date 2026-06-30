@@ -236,7 +236,7 @@ export class KernelValidationRunner {
 
     return {
       timestamp: new Date().toISOString(),
-      kernelVersion: '1.0.0',
+      kernelVersion: 'v2.1.0-Deterministic',
       summary: {
         totalTests,
         passed,

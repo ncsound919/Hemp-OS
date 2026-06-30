@@ -10,9 +10,10 @@ import { motion, AnimatePresence } from 'motion/react';
 interface IngestionHubProps {
   onUpdateBiomass: (potency: { thca: number; thc: number; cbda: number; cbd: number; cbga: number; other: number }, name: string) => void;
   onAddResearchArticle: (article: any) => void;
+  onApplyKaggleCalibration: (calibrationData: any) => void;
 }
 
-export function IngestionHub({ onUpdateBiomass, onAddResearchArticle }: IngestionHubProps) {
+export function IngestionHub({ onUpdateBiomass, onAddResearchArticle, onApplyKaggleCalibration }: IngestionHubProps) {
   const [activeSubTab, setActiveSubTab] = useState<'ocr' | 'science' | 'kaggle' | 'settings'>('ocr');
 
   // API & Parsing Settings states
@@ -292,6 +293,7 @@ export function IngestionHub({ onUpdateBiomass, onAddResearchArticle }: Ingestio
       setIsKaggleVerified(true);
       const calculatedR2 = parseFloat((0.982 + Math.random() * 0.015).toFixed(4));
       setRSquared(calculatedR2);
+      onApplyKaggleCalibration({ rSquared: calculatedR2, dataset: selectedDataset });
       setKaggleLogs(prev => [
         ...prev,
         `🎉 Calibration complete!`,

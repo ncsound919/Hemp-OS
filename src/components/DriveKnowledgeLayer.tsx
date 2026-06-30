@@ -91,8 +91,8 @@ export function DriveKnowledgeLayer({
     { id: 'n-con1', label: 'Supercritical CO₂ Extraction', type: 'concept', description: 'Extracting valuable cannabinoids from organic feedstock using supercritical fluid carbon dioxide.', details: 'Optimized density: 0.72 g/mL. Modifier solvent: Methanol or Ethanol.' },
     { id: 'n-con2', label: 'Winterization Temperature Curves', type: 'concept', description: 'Precipitating wax impurities and lipids by freezing in co-solvent matrices.', details: 'Critical threshold: holding at -40°C to maximize filtration yields.' },
     { id: 'n-con3', label: 'Arrhenius Kinetics Model', type: 'concept', description: 'Using reaction temperature rates to determine decarboxylation efficiency.', details: 'Frequency factor (A): ~2.45e11 s-1, Ea: ~126 kJ/mol.' },
-    { id: 'n-mod1', label: 'HempForge Model extraction.v1.2.0', type: 'model', description: 'The active physical kernel simulation model determining final CBD yield predictions.', details: 'Calibrated using Dr. Carters experimental datasets to match real-world 82.4% purity.' },
-    { id: 'n-cam1', label: 'HempForge Campaign Delta-9', type: 'campaign', description: 'The sweep protocol testing a wide range of extraction pressures (60 bar to 120 bar).', details: 'Directly testing the Arrhenius parameter ranges suggested in Vance Supercritical Fluids Chapter 4.' }
+    { id: 'n-mod1', label: 'Hemp-OS Model extraction.v1.2.0', type: 'model', description: 'The active physical kernel simulation model determining final CBD yield predictions.', details: 'Calibrated using Dr. Carters experimental datasets to match real-world 82.4% purity.' },
+    { id: 'n-cam1', label: 'Hemp-OS Campaign Delta-9', type: 'campaign', description: 'The sweep protocol testing a wide range of extraction pressures (60 bar to 120 bar).', details: 'Directly testing the Arrhenius parameter ranges suggested in Vance Supercritical Fluids Chapter 4.' }
   ]);
 
   const [graphEdges] = useState<GraphEdge[]>([
@@ -285,6 +285,13 @@ export function DriveKnowledgeLayer({
     if (!accessToken) return;
     setIsSyncing(true);
 
+    // Smart Detection
+    let ingestionType = 'document';
+    if (file.name.toLowerCase().includes('book')) ingestionType = 'book';
+    else if (file.name.toLowerCase().includes('data')) ingestionType = 'dataset';
+    
+    console.log(`Ingesting ${file.name} as ${ingestionType}`);
+
     try {
       const response = await fetch('/api/drive/ingest', {
         method: 'POST',
@@ -295,7 +302,8 @@ export function DriveKnowledgeLayer({
         body: JSON.stringify({
           fileId: file.id,
           fileName: file.name,
-          mimeType: file.mimeType
+          mimeType: file.mimeType,
+          ingestionType
         })
       });
 
@@ -307,7 +315,7 @@ export function DriveKnowledgeLayer({
           author: data.metadata.author,
           date: data.metadata.date,
           sizeBytes: data.metadata.sizeBytes,
-          mimeType: data.metadata.mimeType,
+          mimeType: data.mimeType || file.mimeType, // Fallback
           indexedTopics: data.indexedTopics,
           citations: data.citations,
           chapters: data.chapters,
@@ -341,7 +349,7 @@ export function DriveKnowledgeLayer({
         res = `According to Carter et al. (2024) [Practical Phytocannabinoid Processing, Chapter 2]:
 "Separating waxes requires holding ethanol-rich solvent at temperatures <= -40°C for at least 12 hours. Cooling rates above 1.5°C/min cause fine wax suspensions that bypass filtering layers."
 
-Current HempForge Model (Yield Model v1.2.0) has calibrated its winterization parameters directly matching this cooling limit (-1.2°C/min) to achieve 99.42% accuracy during standard runs.`;
+Current Hemp-OS Model (Yield Model v1.2.0) has calibrated its winterization parameters directly matching this cooling limit (-1.2°C/min) to achieve 99.42% accuracy during standard runs.`;
       } else if (q.includes('co2') || q.includes('extraction') || q.includes('pressure')) {
         res = `Literature findings in NIST Fluids Data (2021) and Carter et al. (2024) state:
 "Supercritical CO2 extraction density profiles show peak cannabinoid solubility at densities between 0.6g/mL and 0.8g/mL."
@@ -351,7 +359,7 @@ Your current Campaign Delta-9 sweep protocol covers the ideal pressure bounds su
         res = `Vance Research Paper (Drive Book Q) and NIST databases propose:
 "Decarboxylation activation energy Ea is estimated at 126 kJ/mol, with a pre-exponential frequency factor A of 2.45e11 s-1."
 
-HempForge System Policy GW-1 is currently evaluating Proposal HF-94 to refine the local Arrhenius rates to match these exact book parameters, mitigating 1.5% prediction uncertainty.`;
+Hemp-OS System Policy GW-1 is currently evaluating Proposal HF-94 to refine the local Arrhenius rates to match these exact book parameters, mitigating 1.5% prediction uncertainty.`;
       } else {
         res = `Searched 2 textbooks and ${ingestedDocs.length - 2} ingested files from Google Drive.
 Found semantic match in " Carter, 2024: Practical Phytocannabinoid Processing " on topics matching your query.
@@ -368,13 +376,13 @@ The literature supports maintaining standard sub-freezing separation matrices. Y
   // Helper to generate the text describing node-relationships
   const getReflexiveExplanation = () => {
     if (selectedNodeId === 'n-mod1') {
-      return 'HempForge Model extraction.v1.2.0 is calibrated from Dr. Carter Practical Processing Guide (Drive Book Y), which is derived from Book Y in Google Drive.';
+      return 'Hemp-OS Model extraction.v1.2.0 is calibrated from Dr. Carter Practical Processing Guide (Drive Book Y), which is derived from Book Y in Google Drive.';
     } else if (selectedNodeId === 'n-cam1') {
       return 'Campaign Delta-9 sweeps a parameter space suggested by Chapter 4 of Prof. Vance Supercritical Fluids Paper (Drive Book Q).';
     } else if (selectedNode?.type === 'document') {
       return `This is an ingested Knowledge Corpus document. Relationships: Supports Concepts in Supercritical CO2, Winterization, and Arrhenius Kinetics.`;
     }
-    return `Selected Concept node: ${selectedNode?.label}. Linked to active HempForge models to drive high-fidelity simulations.`;
+    return `Selected Concept node: ${selectedNode?.label}. Linked to active Hemp-OS models to drive high-fidelity simulations.`;
   };
 
   return (
@@ -633,7 +641,7 @@ The literature supports maintaining standard sub-freezing separation matrices. Y
               <div className="py-8 text-center bg-[#0d0d0f] border border-[#1c1c1f] rounded-xl p-4">
                 <Info className="w-6 h-6 text-[#444] mx-auto mb-2" />
                 <p className="text-[10px] text-[#666] leading-relaxed max-w-xs mx-auto">
-                  Sign in with Google using the top-right authorization gate to sync, extract, and index scientific books directly from your Google Drive folders into HempForge.
+                  Sign in with Google using the top-right authorization gate to sync, extract, and index scientific books directly from your Google Drive folders into Hemp-OS.
                 </p>
               </div>
             )}
@@ -689,7 +697,7 @@ The literature supports maintaining standard sub-freezing separation matrices. Y
                   <Network className="w-4 h-4 text-amber-400" />
                   Interactive Research & Ingestion Graph
                 </h3>
-                <p className="text-[8.5px] text-gray-500 font-mono">Displays links between Literature, Concepts, and HempForge Campaigns</p>
+                <p className="text-[8.5px] text-gray-500 font-mono">Displays links between Literature, Concepts, and Hemp-OS Campaigns</p>
               </div>
             </div>
 
@@ -743,7 +751,7 @@ The literature supports maintaining standard sub-freezing separation matrices. Y
           <div className="bg-[#121214] border border-[#1f1f21] rounded-xl p-4">
             <h3 className="text-[10px] font-bold text-white uppercase tracking-widest font-mono border-b border-[#1f1f21] pb-3 mb-4 flex items-center gap-1.5">
               <Search className="w-3.5 h-3.5 text-indigo-400" />
-              Ask HempForge Literature (Grounded Search)
+              Ask Hemp-OS Literature (Grounded Search)
             </h3>
             
             <form onSubmit={handleSemanticSearch} className="flex gap-2">

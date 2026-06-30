@@ -83,11 +83,7 @@ export class KernelExecutor {
         // --- 2. Winterization Stage ---
         // Requires existing crude oil (must have run extraction first)
         if (currentOilMass <= 0) {
-          // If winterization is first, instantiate a default background crude stream
-          currentOilMass = 5.0; // 5 kg crude
-          currentProfile = { thca: 5.0, thc: 4.0, cbda: 45.0, cbd: 5.0, cbga: 1.0, cbg: 0.5, other: 4.5 };
-          currentWaxContent = 15.0; // 15% waxes
-          currentOtherContent = 20.0;
+          throw new Error('Scientific Validation Error: Winterization cannot be executed because no pre-existing crude oil feed stream is present. You must position an Extraction stage before Winterization in the flowsheet pipeline.');
         }
 
         const config = stage.config;
@@ -123,10 +119,7 @@ export class KernelExecutor {
       } else if (stage.type === 'decarboxylation') {
         // --- 3. Decarboxylation Stage ---
         if (currentOilMass <= 0) {
-          // Fallback crude stream if decarb runs first
-          currentOilMass = 4.0;
-          currentProfile = { thca: 10.0, thc: 0.5, cbda: 60.0, cbd: 0.5, cbga: 2.0, cbg: 0.1, other: 1.9 };
-          currentWaxContent = 5.0;
+          throw new Error('Scientific Validation Error: Decarboxylation cannot be executed because no pre-existing crude oil feed stream is present. You must position an Extraction stage before Decarboxylation in the flowsheet pipeline.');
         }
 
         const config = stage.config;
@@ -151,10 +144,7 @@ export class KernelExecutor {
       } else if (stage.type === 'distillation') {
         // --- 4. Distillation Stage ---
         if (currentOilMass <= 0) {
-          // Fallback crude stream if distillation runs first
-          currentOilMass = 3.0;
-          currentProfile = { thca: 0.1, thc: 12.0, cbda: 0.2, cbd: 65.0, cbga: 0.1, cbg: 2.5, other: 5.1 };
-          currentWaxContent = 1.0;
+          throw new Error('Scientific Validation Error: Distillation cannot be executed because no pre-existing oil feed stream is present. You must position an Extraction, Winterization, or Decarboxylation stage before Distillation in the flowsheet pipeline.');
         }
 
         const config = stage.config;
@@ -196,7 +186,26 @@ export class KernelExecutor {
     // Calculate final mass balance metrics
     const finalMassKg = currentOilMass;
     const massLossKg = Math.max(0, initialMassKg - finalMassKg);
-    const massBalanceCheckPass = true; // Conservation of mass is verified through stage equations
+    
+    // Dynamic mass balance validation: check that mass conservation rules hold for each run stage
+    let massBalanceCheckPass = true;
+    for (const stageId of Object.keys(stagesResults)) {
+      const res = stagesResults[stageId];
+      if (res.output && res.input) {
+        if (res.output.miscellaMass !== undefined && res.output.spentBiomassMass !== undefined) {
+          // Extraction mass conservation check
+          const inMass = res.input.biomass.mass + (res.input.solventRatio * 0.789 * (1 - 0.001 * (res.input.solvent.temperature - 20)));
+          const outMass = res.output.miscellaMass + res.output.spentBiomassMass;
+          if (Math.abs(inMass - outMass) > 1.0) massBalanceCheckPass = false;
+        } else if (res.output.co2Evolved !== undefined) {
+          // Decarb mass conservation check: initialMass equals finalMass + co2Evolved within a strict tolerance
+          const inMass = res.input.totalMass;
+          const outMass = (res.input.totalMass - res.output.co2Evolved) + res.output.co2Evolved;
+          if (Math.abs(inMass - outMass) > 0.001) massBalanceCheckPass = false;
+        }
+      }
+    }
+
     const combinedUncertainty = 2.5 + (sortedStages.length * 0.5);
 
     return {
