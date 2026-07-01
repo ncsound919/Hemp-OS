@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import React from 'react';
 import { CronDaemonPanel } from './CronDaemonPanel.tsx';
 import { CronJob } from './types.ts';
@@ -14,6 +14,15 @@ vi.mock('react-hot-toast', () => {
     },
     Toaster: () => <div data-testid="mock-toaster" />,
   };
+});
+
+// This project's vitest setup does not enable global test hooks, so
+// @testing-library/react's automatic DOM cleanup (which relies on a global
+// `afterEach`) never runs. Without this, each `render()` call below leaves
+// its DOM mounted, causing later tests to see duplicate elements from
+// earlier renders (e.g. multiple "Run Now" buttons).
+afterEach(() => {
+  cleanup();
 });
 
 const mockJobs: CronJob[] = [

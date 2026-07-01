@@ -50,7 +50,18 @@ export const ExplorerTab: React.FC<ExplorerTabProps> = ({
               <div className="flex justify-between items-start gap-1">
                 <span className="font-bold text-[11px] truncate">{strain.name}</span>
                 {strain.isCustom && (
-                  <span className="px-1.5 py-0.5 bg-cyan-950/20 border border-cyan-500/20 text-cyan-400 text-[6px] font-mono rounded font-bold uppercase">F1 Hybrid</span>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className="px-1.5 py-0.5 bg-cyan-950/20 border border-cyan-500/20 text-cyan-400 text-[6px] font-mono rounded font-bold uppercase">Layer 9 Substrate</span>
+                    {strain.verificationStatus === 'verified' && (
+                      <span className="px-1.5 py-0.5 bg-emerald-950/20 border border-emerald-500/20 text-emerald-400 text-[6px] font-mono rounded font-bold uppercase">Formally Verified</span>
+                    )}
+                    {strain.verificationStatus === 'warning' && (
+                      <span className="px-1.5 py-0.5 bg-amber-950/20 border border-amber-500/20 text-amber-400 text-[6px] font-mono rounded font-bold uppercase">F-Risk Warning</span>
+                    )}
+                    {strain.verificationStatus === 'failed' && (
+                      <span className="px-1.5 py-0.5 bg-red-950/20 border border-red-500/20 text-red-400 text-[6px] font-mono rounded font-bold uppercase">Proof Failed</span>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="flex justify-between items-center mt-1">

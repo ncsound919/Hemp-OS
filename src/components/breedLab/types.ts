@@ -20,6 +20,8 @@ export interface Strain {
   origin: string;
   landraceBackground: string;
   isCustom?: boolean;
+  verificationStatus?: 'verified' | 'warning' | 'failed';
+  leanSpec?: string;
 
   // --- QUANTITATIVE GENETICS ENGINE EXTRA FIELDS ---
   phenotype?: Record<string, TraitStat>;

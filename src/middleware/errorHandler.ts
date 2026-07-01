@@ -3,7 +3,14 @@ import { ZodError } from 'zod';
 import { AppError } from '../lib/AppError';
 import { logger } from '../lib/logger';
 
-export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction) {
+  // If a handler already started writing the response (e.g. an SSE stream),
+  // delegate to Express's default handler which just closes the connection
+  // instead of attempting to send a second response.
+  if (res.headersSent) {
+    return next(err);
+  }
+
   if (err instanceof ZodError) {
     return res.status(400).json({
       success: false,

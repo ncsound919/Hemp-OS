@@ -8,6 +8,7 @@ import { env } from './config/env';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFound';
+import { apiKeyAuth } from './middleware/apiKeyAuth';
 
 import { healthRouter } from './routes/health.routes';
 import { kernelRouter } from './routes/kernel.routes';
@@ -29,12 +30,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(requestIdMiddleware);
 
 app.use('/health', healthRouter);
-app.use('/api/kernel', kernelRouter);
+// Drive routes authenticate via the caller's own Google OAuth token, so
+// they are intentionally excluded from the apiKeyAuth gate below.
 app.use('/api/drive', driveRouter);
-app.use('/api/ai', aiRouter);
-app.use('/api/ollama', ollamaRouter);
-app.use('/api/ingest', ingestRouter);
-app.post('/api/scrape', (req, res, next) => {
+app.use('/api/kernel', apiKeyAuth, kernelRouter);
+app.use('/api/ai', apiKeyAuth, aiRouter);
+app.use('/api/ollama', apiKeyAuth, ollamaRouter);
+app.use('/api/ingest', apiKeyAuth, ingestRouter);
+app.post('/api/scrape', apiKeyAuth, (req, res, next) => {
   req.url = '/scrape';
   ingestRouter(req, res, next);
 });
