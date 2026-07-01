@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, act, within, cleanup } from '@testing-library/react';
 import React from 'react';
 import { CronDaemonPanel } from './CronDaemonPanel.tsx';
 import { CronJob } from './types.ts';
@@ -27,6 +27,10 @@ const mockJobs: CronJob[] = [
     action: 'Run wax filtration pre-exponentials',
   },
 ];
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('CronDaemonPanel Component Suite', () => {
   it('renders registered cron jobs, title, metadata and action buttons successfully', () => {
@@ -78,8 +82,12 @@ describe('CronDaemonPanel Component Suite', () => {
       />
     );
 
-    const runNowBtn = screen.getByText('Run Now');
-    fireEvent.click(runNowBtn);
+    const jobCard = document.getElementById('cron-job-card-test-job-1');
+    expect(jobCard).toBeTruthy();
+    const runNowBtn = within(jobCard!).getByRole('button', { name: 'Run Now' });
+    act(() => {
+      fireEvent.click(runNowBtn);
+    });
     expect(handleRunNow).toHaveBeenCalledWith('Precision Separation Loop');
   });
 
@@ -104,8 +112,9 @@ describe('CronDaemonPanel Component Suite', () => {
       />
     );
 
-    const newJobBtn = screen.getByText('New Job');
-    fireEvent.click(newJobBtn);
+    const newJobBtn = document.getElementById('btn-register-cron');
+    expect(newJobBtn).toBeTruthy();
+    fireEvent.click(newJobBtn!);
 
     // Verify Modal has opened
     expect(screen.getByText('Register New Daemon')).toBeTruthy();
