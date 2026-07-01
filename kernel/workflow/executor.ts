@@ -171,7 +171,7 @@ export class KernelExecutor {
 
         // Distillate becomes the final output stream state
         currentOilMass = output.distillateMass;
-        currentWaxContent = (vaporizedWaxes(output) / output.distillateMass) * 100; // very low wax contamination
+        currentWaxContent = (vaporizedWaxes(output, currentOilMass * (currentWaxContent / 100)) / output.distillateMass) * 100; // very low wax contamination
         
         // Distillate composition profile (mostly active cannabinoids)
         const yieldFactor = output.cannabinoidYield / 100;
@@ -206,7 +206,9 @@ export class KernelExecutor {
       }
     }
 
-    const combinedUncertainty = 2.5 + (sortedStages.length * 0.5);
+    // Root Sum Square (RSS) uncertainty propagation: sqrt(sum(uncertainties^2))
+    // Initial measurement uncertainty 1.5%, plus 0.5% per processing stage
+    const combinedUncertainty = Math.sqrt(Math.pow(1.5, 2) + sortedStages.reduce((acc, _) => acc + Math.pow(0.5, 2), 0));
 
     return {
       manifest: {
@@ -240,6 +242,8 @@ export class KernelExecutor {
 }
 
 // Utility to approximate wax carry-over into distillate
-function vaporizedWaxes(distOut: any): number {
-  return distOut.distillateMass * 0.005; // 0.5% default carryover of micro waxes
+function vaporizedWaxes(distOut: any, feedWaxMass: number): number {
+  // Wax carryover is now modeled as a function of feed wax mass and distillation efficiency
+  // Wiped film distillers reduce wax content by factors of 100-1000
+  return feedWaxMass * 0.001 * (1 - Math.min(0.9, distOut.cannabinoidYield / 100));
 }

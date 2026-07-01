@@ -1,0 +1,61 @@
+
+import { AtomDef, BondDef } from './types.ts';
+
+export const ATOM_COLORS = {
+  C: 0x333333,
+  H: 0xeeeeee,
+  O: 0xff3333,
+  CO2_C: 0x4444aa,
+  CO2_O: 0xff5555,
+  LIPID_C: 0x7e8a9f,
+  TERPENE: 0xffa500,
+  CBD_GOLD: 0xd4af37,
+};
+
+export const cannabinoidAtoms: AtomDef[] = [
+  { id: 0, element: 'C', pos: [0, 0, 0] },
+  { id: 1, element: 'C', pos: [1.2, 0.7, 0] },
+  { id: 2, element: 'C', pos: [1.2, 2.1, 0] },
+  { id: 3, element: 'C', pos: [0, 2.8, 0] },
+  { id: 4, element: 'C', pos: [-1.2, 2.1, 0] },
+  { id: 5, element: 'C', pos: [-1.2, 0.7, 0] },
+  { id: 6, element: 'O', pos: [2.4, 0, 0] },
+  { id: 7, element: 'H', pos: [3.1, -0.5, 0.2] },
+  { id: 8, element: 'O', pos: [-2.4, 0, 0] },
+  { id: 9, element: 'H', pos: [-3.1, -0.5, -0.2] },
+  { id: 10, element: 'C', pos: [0, 4.2, 0] },
+  { id: 11, element: 'C', pos: [0.8, 5.0, 0.4] },
+  { id: 12, element: 'C', pos: [0.8, 6.4, 0.4] },
+  { id: 13, element: 'C', pos: [1.6, 7.2, 0.8] },
+  { id: 14, element: 'C', pos: [1.6, 8.6, 0.8] },
+  { id: 15, element: 'H', pos: [2.2, 9.1, 1.3] },
+  { id: 16, element: 'C', pos: [0, -1.4, 0] },
+  { id: 17, element: 'C', pos: [1.2, -2.1, 0.4] },
+  { id: 18, element: 'C', pos: [1.2, -3.5, 0.4] },
+  { id: 19, element: 'C', pos: [0, -4.2, 0] },
+  { id: 20, element: 'C', pos: [-1.2, -3.5, -0.4] },
+  { id: 21, element: 'C', pos: [-1.2, -2.1, -0.4] },
+  { id: 22, element: 'H', pos: [-1.8, -1.6, -0.8] },
+  { id: 23, element: 'H', pos: [1.8, -1.6, 0.8] },
+  { id: 24, element: 'C', pos: [-2.4, 2.9, 0.2], isCarboxyl: true },
+  { id: 25, element: 'O', pos: [-3.4, 2.1, 0.7], isCarboxyl: true },
+  { id: 26, element: 'O', pos: [-2.8, 4.1, -0.3], isCarboxyl: true },
+  { id: 27, element: 'H', pos: [-3.7, 4.4, -0.2], isCarboxyl: true, isCarboxylHydrogen: true },
+];
+
+export const cannabinoidBonds: BondDef[] = [
+  { from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3 },
+  { from: 3, to: 4 }, { from: 4, to: 5 }, { from: 5, to: 0 },
+  { from: 1, to: 6 }, { from: 6, to: 7 },
+  { from: 5, to: 8 }, { from: 8, to: 9 },
+  { from: 3, to: 10 }, { from: 10, to: 11 }, { from: 11, to: 12 },
+  { from: 12, to: 13 }, { from: 13, to: 14 }, { from: 14, to: 15 },
+  { from: 0, to: 16 }, { from: 16, to: 17 }, { from: 17, to: 18 },
+  { from: 18, to: 19 }, { from: 19, to: 20 }, { from: 20, to: 21 },
+  { from: 21, to: 16 },
+  { from: 21, to: 22 }, { from: 17, to: 23 },
+  { from: 4, to: 24, isCarboxyl: true },
+  { from: 24, to: 25, isCarboxyl: true },
+  { from: 24, to: 26, isCarboxyl: true },
+  { from: 26, to: 27, isCarboxyl: true },
+];

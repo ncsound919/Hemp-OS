@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { loader } from '../host/pluginLoader';
+import { registry } from '../host/serviceRegistry';
 
 interface Subsystem {
   id: string;
@@ -316,37 +318,28 @@ by
   }, [optWeight]);
 
   // Handle formal verification proof
-  const verifyLeanProof = () => {
+  const verifyLeanProof = async () => {
     setVerificationResult('running');
     setVerLog(['Initializing Lean 4 Prover Engine...', 'Ingesting thermal limit declarations...', 'Parsing proof structures...']);
     
-    setTimeout(() => {
-      setVerLog(prev => [...prev, 'Validating inductive assumptions...', 'Verifying boundary values: T_min = 0°C, T_max = 160°C']);
-    }, 600);
-
-    setTimeout(() => {
-      setVerLog(prev => [
-        ...prev, 
-        'Proof verified successfully.',
-        'Lean Theorem: `safe_bounds` is logically complete.',
-        'Mathematical verification hash: sha256_e89bc83a1102f9'
-      ]);
-      setVerificationResult('verified');
-    }, 1500);
+    try {
+      const result = await loader.run('lean-prover', { spec: leanSpec });
+      setVerLog(prev => [...prev, ...result.log]);
+      setVerificationResult(result.status === 'verified' ? 'verified' : 'idle');
+    } catch (e) {
+      setVerLog(prev => [...prev, 'Proof checker failed.']);
+      setVerificationResult('idle');
+    }
   };
 
   // DAG trigger
-  const runDAG = () => {
+  const runDAG = async () => {
     setDagStatus('step1');
-    setTimeout(() => {
-      setDagStatus('step2');
-    }, 1000);
-    setTimeout(() => {
-      setDagStatus('step3');
-    }, 2000);
-    setTimeout(() => {
-      setDagStatus('completed');
-    }, 3000);
+    const workflow = registry.get('dag-workflow') as any;
+    if (workflow) {
+        await workflow.executeWorkflow('extraction-pipeline');
+    }
+    setDagStatus('completed');
   };
 
   // Simulated node load cluster activity

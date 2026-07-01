@@ -1,15 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { 
-  Play, Pause, RefreshCw, Thermometer, Info, ZoomIn, ZoomOut, Maximize2, 
-  Settings, Flame, Activity, HelpCircle, Shield, Sliders, Layers, Sparkles
-} from 'lucide-react';
-
-interface Molecule3DVisualizerProps {
-  activeStageType: 'extraction' | 'winterization' | 'decarboxylation' | 'distillation' | string;
-  stageConfig: Record<string, any>;
-  results?: any;
-}
+import { StageType, StageConfig } from './molecule3dVisualizer/types.ts';
+import { setupScene } from './molecule3dVisualizer/sceneSetup.ts';
+import { getSubstrateDetails } from './molecule3dVisualizer/hudHelpers.ts';
 
 // CPK Color Scheme for Atoms
 const ATOM_COLORS = {
@@ -58,11 +51,9 @@ export function Molecule3DVisualizer({
   // Refs to allow animation loop to read latest state without re-creating scene
   const viewModeRef = useRef(viewMode);
   const showBondsRef = useRef(showBonds);
-  const isDecarboxylatedRef = useRef(isDecarbaloxlatedRefVal());
+  const isDecarboxylatedRef = useRef(isDecarboxylated);
   const activeStageTypeRef = useRef(activeStageType);
   const configRef = useRef(stageConfig);
-
-  function isDecarbaloxlatedRefVal() { return isDecarboxylated; }
 
   // Sync refs
   useEffect(() => { viewModeRef.current = viewMode; }, [viewMode]);

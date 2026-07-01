@@ -6,6 +6,9 @@
 import { useState, useEffect } from 'react';
 import { Biomass, ProcessGraph, ProcessStage } from '../kernel/core/types.ts';
 import { KernelExecutor } from '../kernel/workflow/executor.ts';
+import { registry } from './host/serviceRegistry.ts';
+import { scheduler } from './host/scheduler.ts';
+import { initializeHost } from './host/initializer.ts';
 import { BiomassSelector } from './components/BiomassSelector.tsx';
 import { StageConfigurator } from './components/StageConfigurator.tsx';
 import { ProcessVisualizer } from './components/ProcessVisualizer.tsx';
@@ -253,7 +256,17 @@ export default function App() {
 
   // Run automatically on first mount to populate the workspace
   useEffect(() => {
+    initializeHost();
     runSimulation();
+    
+    // Initialize host services
+    registry.startAll();
+    scheduler.start();
+
+    return () => {
+      registry.stopAll();
+      scheduler.stop();
+    };
   }, []);
 
   // Update specific stage config

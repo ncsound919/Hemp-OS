@@ -5,16 +5,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Send, Sparkles, MessageSquare, AlertCircle, RefreshCw, Cpu, 
-  Settings, Check, Info, ChevronDown, ChevronUp, Database, HelpCircle, HardDrive
+  Send, Sparkles, AlertCircle, RefreshCw, Cpu, 
 } from 'lucide-react';
-import { ProcessGraph } from '../../kernel/core/types.ts';
+import { ProcessGraph, ProcessRunResult } from '../../kernel/core/types.ts';
 
 interface AIAdvisorProps {
   graph: ProcessGraph;
-  currentResults: any;
+  currentResults: ProcessRunResult | null;
   selectedBiomassName: string;
-  onApplyAIConfig?: (configs: Array<{ stageId: string; config: Record<string, any> }>) => void;
 }
 
 interface OllamaModel {
@@ -34,17 +32,24 @@ const SAMPLE_LOCAL_MODELS = [
   { id: 'tinyllama:1.1b', name: 'TinyLlama (1.1B)', size: '1.1B parameters', strengths: 'Tiny footprint, high response velocity, educational use' }
 ];
 
+type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'simulated';
+
+interface Message {
+  role: 'user' | 'assistant';
+  text: string;
+  source?: string;
+}
+
 export const AIAdvisor: React.FC<AIAdvisorProps> = ({
   graph,
   currentResults,
   selectedBiomassName,
-  onApplyAIConfig,
 }) => {
   // Engine Mode Selection
   const [engineMode, setEngineMode] = useState<'gemini' | 'ollama'>('gemini');
   
   // Conversation Feed
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string; source?: string }>>([
+  const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
       text: "Hi! I am the Hemp OS AI Workspace Advisor. I live entirely outside the physical simulation kernel. I can help you design optimal workflows, troubleshoot process bottlenecks, and interpret your thermal decarboxylation or distillation yields.",
@@ -59,7 +64,7 @@ export const AIAdvisor: React.FC<AIAdvisorProps> = ({
   const [ollamaUrl, setOllamaUrl] = useState('http://localhost:11434');
   const [detectedModels, setDetectedModels] = useState<OllamaModel[]>([]);
   const [selectedModel, setSelectedModel] = useState('llama3.2:1b');
-  const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'simulated'>('simulated');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('simulated');
   const [corsError, setCorsError] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
@@ -72,15 +77,10 @@ export const AIAdvisor: React.FC<AIAdvisorProps> = ({
       setCorsError(false);
     }
     try {
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 2000);
-      
-      const response = await fetch(`${ollamaUrl}/api/tags`, { 
-        method: 'GET',
-        mode: 'cors',
-        signal: controller.signal
+      // Use backend proxy to bypass CORS
+      const response = await fetch(`/api/ollama/tags?url=${encodeURIComponent(ollamaUrl)}`, { 
+        method: 'GET'
       });
-      clearTimeout(id);
 
       if (response.ok) {
         const data = await response.json();
@@ -100,7 +100,7 @@ export const AIAdvisor: React.FC<AIAdvisorProps> = ({
       setCorsError(true);
       setConnectionStatus('simulated'); // Default to high-fidelity offline simulation
       if (!quiet) {
-        setError("Could not reach Ollama at the specified URL. Standard browser CORS protections or mixed-content policies (HTTPS/HTTP) can block direct connections. Auto-toggled to 'Offline Simulation Sandbox' so you can play immediately.");
+        setError("Could not reach Ollama at the specified URL via proxy.");
       }
     }
   };
@@ -189,10 +189,11 @@ To perform deeper chemical engineering synthesis, toggle back to the **Gemini 3.
 Active strain: ${selectedBiomassName}. Active stages: ${activeStages}. 
 Since you are a compact model under 3B parameters, keep answers ultra-short, simple, and direct.`;
 
-          const response = await fetch(`${ollamaUrl}/api/chat`, {
+          const response = await fetch(`/api/ollama/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              url: ollamaUrl,
               model: selectedModel,
               messages: [
                 { role: 'system', content: systemPrompt },
