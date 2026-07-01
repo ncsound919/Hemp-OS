@@ -8,6 +8,7 @@ import { ExtractionModel } from '../models/extractionModel.ts';
 import { DecarboxylationModel } from '../models/decarboxylationModel.ts';
 import { WinterizationModel } from '../models/winterizationModel.ts';
 import { DistillationModel } from '../models/distillationModel.ts';
+import { validateDistillationInput } from '../core/validation.ts';
 
 export interface ValidationTestResult {
   name: string;
@@ -224,6 +225,41 @@ export class KernelValidationRunner {
         status: 'failed',
         details: `Execution error: ${e.message}`,
         expected: 'Successful run',
+        actual: 'Error',
+      });
+    }
+
+    // --- TEST 5: Distillation Validation Gate ---
+    try {
+      const invalidInput = {
+        feedMass: -10, // Invalid: negative mass
+        feedCannabinoidPurity: 50,
+        feedTerpeneContent: 50,
+        feedHeavyResidue: 10,
+        evaporatorTemp: 200,
+        condenserTemp: 50,
+        vacuumPressure: 0.1,
+        feedRate: 1,
+      };
+
+      const errors = validateDistillationInput(invalidInput as any);
+      const hasErrors = errors.length > 0;
+
+      results.push({
+        name: 'Distillation Validation Gate',
+        category: 'boundaries',
+        status: hasErrors ? 'passed' : 'failed',
+        details: `Validation of invalid input (negative mass) returned ${errors.length} errors.`,
+        expected: 'Errors detected',
+        actual: hasErrors ? 'Errors detected' : 'No errors',
+      });
+    } catch (e: any) {
+      results.push({
+        name: 'Distillation Validation Gate',
+        category: 'boundaries',
+        status: 'failed',
+        details: `Execution error: ${e.message}`,
+        expected: 'Successful validation',
         actual: 'Error',
       });
     }
