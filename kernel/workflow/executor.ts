@@ -4,6 +4,13 @@ import { DecarboxylationModel } from '../models/decarboxylationModel.ts';
 import { WinterizationModel } from '../models/winterizationModel.ts';
 import { DistillationModel } from '../models/distillationModel.ts';
 import { topologicalSort } from './processGraph.ts';
+import {
+  validateExtractionInput,
+  validateDecarboxylationInput,
+  validateWinterizationInput,
+  validateDistillationInput,
+  assertValid,
+} from '../core/validation.ts';
 
 // ---- Configuration ----
 interface KernelConfig {
@@ -53,7 +60,7 @@ export class KernelExecutor {
     const stagesResults: Record<string, any> = {};
     const initialMassKg = initialBiomass.mass;
 
-    console.debug(`[KernelExecutor v2.6.1] Starting deterministic simulation on ${initialMassKg.toFixed(3)} kg ${initialBiomass.name}`);
+    console.debug(`[KernelExecutor v2.7.0] Starting deterministic simulation on ${initialMassKg.toFixed(3)} kg ${initialBiomass.name}`);
 
     for (const stage of sortedStages) {
       try {
@@ -64,7 +71,7 @@ export class KernelExecutor {
 
         // ---- Dispatch to models ----
         if (stage.type === 'extraction') {
-          const extOutput = ExtractionModel.run({
+          const extractionInput = {
             biomass: initialBiomass,
             solvent: {
               type: config.solventType || 'Ethanol',
@@ -75,13 +82,17 @@ export class KernelExecutor {
             temperature: config.extractionTemp ?? -40,
             duration: config.duration ?? 30,
             agitationSpeed: config.agitationSpeed ?? 300,
-          });
+          };
+
+          assertValid(validateExtractionInput(extractionInput), 'extraction');
+
+          const extOutput = ExtractionModel.run(extractionInput);
           output = extOutput;
           
-          const dryExtractSolidsMassKg = (Object.values(extOutput.cannabinoidRecovery).reduce((a, b) => a + b, 0) / 1000) + extOutput.waxExtracted;
+          const totalCannGrams = Object.values(extOutput.cannabinoidRecovery).reduce((a, b) => a + b, 0);
+          const dryExtractSolidsMassKg = (totalCannGrams / 1000) + extOutput.waxExtracted;
           state.oilMass = dryExtractSolidsMassKg;
           
-          const totalCannGrams = Object.values(extOutput.cannabinoidRecovery).reduce((a, b) => a + b, 0);
           state.profile = {
             thca: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.thca || 0) / totalCannGrams * 100 : 0,
             thc: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.thc || 0) / totalCannGrams * 100 : 0,
@@ -93,6 +104,12 @@ export class KernelExecutor {
           };
           
           state.waxContent = dryExtractSolidsMassKg > 0 ? (extOutput.waxExtracted / dryExtractSolidsMassKg) * 100 : 0;
+          
+          // NOTE: this mass balance compares biomass-in to miscella+spent-biomass-out,
+          // which is NOT a closed system (solvent mass enters but isn't tracked in massIn).
+          // Flagged in audit; left as-is pending a decision on whether to track solvent
+          // mass explicitly or use a dedicated "extraction yield" check instead of the
+          // generic validateMassBalance tolerance.
           massIn = initialBiomass.mass; // input is biomass mass, not oil
           massOut = extOutput.miscellaMass + extOutput.spentBiomassMass;
 
@@ -100,7 +117,8 @@ export class KernelExecutor {
           if (state.oilMass <= 0) {
             throw new Error('Winterization requires crude oil from prior extraction.');
           }
-          const winOutput = WinterizationModel.run({
+
+          const winterizationInput = {
             crudeOilMass: state.oilMass,
             cannabinoidPurity: Object.values(state.profile).reduce((a, b) => a + b, 0),
             waxContent: state.waxContent,
@@ -108,7 +126,11 @@ export class KernelExecutor {
             coolingTemp: config.coolingTemp ?? -40,
             coolingTime: config.coolingTime ?? 24,
             filtrationPasses: config.filtrationPasses ?? 1,
-          });
+          };
+
+          assertValid(validateWinterizationInput(winterizationInput), 'winterization');
+
+          const winOutput = WinterizationModel.run(winterizationInput);
           output = winOutput;
           massIn = state.oilMass;
           massOut = winOutput.dewaxedCrudeMass + winOutput.precipitatedWaxMass;
@@ -120,12 +142,17 @@ export class KernelExecutor {
           if (state.oilMass <= 0) {
             throw new Error('Decarboxylation requires oil from prior stage.');
           }
-          output = DecarboxylationModel.run({
+
+          const decarbInput = {
             initialCannabinoidProfile: state.profile,
             totalMass: state.oilMass,
             temperature: config.temperature ?? 120,
             duration: config.duration ?? 60,
-          });
+          };
+
+          assertValid(validateDecarboxylationInput(decarbInput), 'decarboxylation');
+
+          output = DecarboxylationModel.run(decarbInput);
           massIn = state.oilMass;
           massOut = output.finalMass + (output.co2Evolved ?? 0);
           state.oilMass = output.finalMass;
@@ -138,19 +165,46 @@ export class KernelExecutor {
 
           const totalCann = Object.values(state.profile).reduce((a, b) => a + b, 0);
           const terpenes = state.otherContent * this.config.terpeneFractionOfOther;
-          const heavyResidue = 100 - totalCann - terpenes;
 
-          const distOutput = DistillationModel.run({
+          // FIX: clamp heavyResidue to >= 0. Previously `100 - totalCann - terpenes`
+          // could go negative if totalCann + terpenes exceeded 100 (e.g. floating-point
+          // drift across stages, or a misconfigured terpeneFractionOfOther), which
+          // caused validateDistillationInput/DistillationModel to throw mid-pipeline.
+          // If the raw computation exceeds bounds, we proportionally rescale
+          // totalCann/terpenes down to fit within 100% rather than silently zeroing
+          // heavyResidue, so cannabinoid purity isn't artificially inflated.
+          let feedCannabinoidPurity = totalCann;
+          let feedTerpeneContent = terpenes;
+          let feedHeavyResidue = 100 - totalCann - terpenes;
+
+          if (feedHeavyResidue < 0) {
+            const overshoot = totalCann + terpenes;
+            const scale = 100 / overshoot;
+            feedCannabinoidPurity = totalCann * scale;
+            feedTerpeneContent = terpenes * scale;
+            feedHeavyResidue = 0;
+            console.warn(
+              `[KernelExecutor] Distillation feed composition exceeded 100% (cann=${totalCann.toFixed(
+                2
+              )}%, terp=${terpenes.toFixed(2)}%). Rescaled proportionally to fit.`
+            );
+          }
+
+          const distillationInput = {
             feedMass: state.oilMass,
-            feedCannabinoidPurity: totalCann,
-            feedTerpeneContent: terpenes,
-            feedHeavyResidue: heavyResidue,
+            feedCannabinoidPurity,
+            feedTerpeneContent,
+            feedHeavyResidue,
             feedCannabinoidProfile: state.profile,
             evaporatorTemp: config.evaporatorTemp ?? 185,
             condenserTemp: config.condenserTemp ?? 70,
             vacuumPressure: config.vacuumPressure ?? 0.05,
             feedRate: config.feedRate ?? 1.5,
-          });
+          };
+
+          assertValid(validateDistillationInput(distillationInput), 'distillation');
+
+          const distOutput = DistillationModel.run(distillationInput);
           output = distOutput;
 
           massIn = state.oilMass;
@@ -195,7 +249,7 @@ export class KernelExecutor {
         timestamp: new Date().toISOString(),
         graphSnapshot: graph,
         biomassSnapshot: initialBiomass,
-        kernelVersion: 'v2.6.1-FullProfile',
+        kernelVersion: 'v2.7.0-ValidatedPipeline',
         environment: 'local',
       },
       stagesResults,

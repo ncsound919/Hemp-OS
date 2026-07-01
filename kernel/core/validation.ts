@@ -136,24 +136,92 @@ export function validateDistillationInput(input: DistillationRunInput): Validati
   const errors: ValidationError[] = [];
 
   if (input.feedMass <= 0) {
-    errors.push({ field: 'feedMass', message: 'Distillation feed mass must be greater than 0 kg.', severity: 'error' });
+    errors.push({
+      field: 'feedMass',
+      message: 'Distillation feed mass must be greater than 0 kg.',
+      severity: 'error',
+    });
   }
+
   const totalPct = input.feedCannabinoidPurity + input.feedTerpeneContent + input.feedHeavyResidue;
-  if (Math.abs(totalPct - 100) > 1.0) {
-    errors.push({ field: 'feedCompositions', message: `Sum of feed components (${totalPct.toFixed(1)}%) must be approximately 100%.`, severity: 'error' });
+
+  // Sum > 100% is physically impossible regardless of an "other" bucket.
+  if (totalPct > 100 + 1e-6) {
+    errors.push({
+      field: 'feedCompositions',
+      message: `Sum of feed components (${totalPct.toFixed(1)}%) cannot exceed 100%.`,
+      severity: 'error',
+    });
   }
+
+  // A large unaccounted-for "other" fraction (>15%) is unusual for post-winterization
+  // oil and likely indicates an upstream composition bug rather than real "other" mass.
+  if (totalPct < 85) {
+    errors.push({
+      field: 'feedCompositions',
+      message: `Sum of feed components (${totalPct.toFixed(1)}%) leaves a large unaccounted "other" fraction. Verify upstream state composition.`,
+      severity: 'warning',
+    });
+  }
+
+  for (const [field, value, label] of [
+    ['feedCannabinoidPurity', input.feedCannabinoidPurity, 'Cannabinoid purity'],
+    ['feedTerpeneContent', input.feedTerpeneContent, 'Terpene content'],
+    ['feedHeavyResidue', input.feedHeavyResidue, 'Heavy residue'],
+  ] as const) {
+    if (value < 0 || value > 100) {
+      errors.push({
+        field,
+        message: `${label} must be between 0% and 100%.`,
+        severity: 'error',
+      });
+    }
+  }
+
   if (input.evaporatorTemp < 100 || input.evaporatorTemp > 350) {
-    errors.push({ field: 'evaporatorTemp', message: 'Evaporator temperature must be between 100°C and 350°C.', severity: 'error' });
+    errors.push({
+      field: 'evaporatorTemp',
+      message: 'Evaporator temperature must be between 100°C and 350°C.',
+      severity: 'error',
+    });
   }
+
   if (input.condenserTemp < 20 || input.condenserTemp > 120) {
-    errors.push({ field: 'condenserTemp', message: 'Condenser temperature must be between 20°C and 120°C.', severity: 'error' });
+    errors.push({
+      field: 'condenserTemp',
+      message: 'Condenser temperature must be between 20°C and 120°C.',
+      severity: 'error',
+    });
   }
+
   if (input.vacuumPressure < 0.0001 || input.vacuumPressure > 10) {
-    errors.push({ field: 'vacuumPressure', message: 'Vacuum pressure must be between 0.0001 and 10 mbar.', severity: 'error' });
+    errors.push({
+      field: 'vacuumPressure',
+      message: 'Vacuum pressure must be between 0.0001 and 10 mbar.',
+      severity: 'error',
+    });
   }
+
   if (input.feedRate <= 0 || input.feedRate > 100) {
-    errors.push({ field: 'feedRate', message: 'Feed rate must be between 0.1 and 100 kg/hr.', severity: 'error' });
+    errors.push({
+      field: 'feedRate',
+      message: 'Feed rate must be between 0.1 and 100 kg/hr.',
+      severity: 'error',
+    });
   }
 
   return errors;
+}
+
+// Add a small helper used by the executor to turn ValidationError[] into a thrown
+// error, consistent with how the rest of the kernel surfaces fatal problems.
+export function assertValid(errors: ValidationError[], stageType: string): void {
+  const fatal = errors.filter((e) => e.severity === 'error');
+  if (fatal.length > 0) {
+    const summary = fatal.map((e) => `${e.field}: ${e.message}`).join('; ');
+    throw new Error(`Validation failed for ${stageType}: ${summary}`);
+  }
+  for (const warning of errors.filter((e) => e.severity === 'warning')) {
+    console.warn(`[Kernel][${stageType}] ${warning.field}: ${warning.message}`);
+  }
 }

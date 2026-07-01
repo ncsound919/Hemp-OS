@@ -290,11 +290,12 @@ function toNormalizedRecord(strain: Strain): NormalizedStrainRecord {
 }
 
 export const seedStrains = asyncHandler(async (req: Request, res: Response) => {
+  const force = req.query.force === 'true';
   const existingCount = strainRepo.countStrains();
-  if (existingCount > 0) {
+  if (existingCount > 0 && !force) {
     res.json({
       success: true,
-      message: `Database already contains ${existingCount} strains.`,
+      message: `Database already contains ${existingCount} strains. Use force=true to re-seed/update them.`,
       count: existingCount,
     });
     return;
