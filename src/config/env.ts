@@ -11,6 +11,11 @@ const envSchema = z.object({
   DATA_DIR: z.string().default('data'),
   BODY_LIMIT_JSON: z.string().default('1mb'),
   CORS_ORIGIN: z.string().default('*'),
+  // Optional shared secret gating access to the internal API surface
+  // (kernel, ingest, ollama, ai routes). If unset, those routes remain
+  // open — appropriate for local/single-user use (e.g. AI Studio applets)
+  // but operators exposing this server publicly should set it.
+  API_KEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
