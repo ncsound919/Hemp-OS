@@ -20,7 +20,7 @@ export function validate(schema: ZodSchema) {
         query: req.query,
         params: req.params,
         headers: req.headers,
-      });
+      }) as { body?: any; query?: any; params?: any };
 
       // Write back only the keys the schema actually validated, in case the
       // schema doesn't declare all four (e.g. a body-only schema).

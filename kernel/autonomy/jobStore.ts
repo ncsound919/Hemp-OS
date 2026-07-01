@@ -29,11 +29,11 @@ export interface CronJob {
 
 export const jobStore = {
   listEnabled: async (): Promise<CronJob[]> => {
-    const rows = db.prepare('SELECT * FROM cron_jobs WHERE enabled = 1').all();
-    return rows.map((r: any) => ({ ...r, enabled: !!r.enabled }));
+    const rows = db.prepare('SELECT * FROM cron_jobs WHERE enabled = 1').all() as CronJob[];
+    return rows.map((r) => ({ ...r, enabled: !!r.enabled }));
   },
   getById: async (id: string): Promise<CronJob | null> => {
-    const row = db.prepare('SELECT * FROM cron_jobs WHERE id = ?').get(id);
+    const row = db.prepare('SELECT * FROM cron_jobs WHERE id = ?').get(id) as CronJob | undefined;
     return row ? { ...row, enabled: !!row.enabled } : null;
   },
   recordRun: async (id: string, run: any): Promise<any> => {
