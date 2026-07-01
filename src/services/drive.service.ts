@@ -1,8 +1,30 @@
 import { AppError } from '../lib/AppError.ts';
 
+// Google Drive IDs are alphanumeric plus '-' and '_'. Anything else is
+// either not a real Drive ID or an attempt to break out of the quoted
+// string in the `q` search expression (query injection).
+const DRIVE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+/**
+ * Escapes a value for safe interpolation inside a single-quoted Drive API
+ * `q` search expression, per Drive's query string escaping rules (backslash
+ * and single quote must be backslash-escaped).
+ */
+function escapeDriveQueryValue(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function assertValidDriveId(id: string): string {
+  if (!DRIVE_ID_PATTERN.test(id)) {
+    throw new AppError(400, 'Invalid folderId');
+  }
+  return id;
+}
+
 export class DriveService {
   async listFiles(token: string, folderId = 'root') {
-    const parentQuery = `'${folderId}' in parents`;
+    const safeFolderId = escapeDriveQueryValue(assertValidDriveId(folderId));
+    const parentQuery = `'${safeFolderId}' in parents`;
     const mimeQuery = "(mimeType = 'application/pdf' or mimeType = 'text/plain' or mimeType = 'application/vnd.google-apps.document' or mimeType = 'application/vnd.google-apps.folder')";
     const queryStr = `${parentQuery} and ${mimeQuery} and trashed = false`;
     const q = encodeURIComponent(queryStr);

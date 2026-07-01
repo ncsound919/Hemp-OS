@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import {
@@ -9,6 +9,7 @@ import {
 import { IngestionService } from '../services/ingestion.service.ts';
 import { INITIAL_STRAINS } from '../components/breedLab/data.ts';
 import { Strain } from '../components/breedLab/types.ts';
+import { asyncHandler } from '../lib/asyncHandler.ts';
 
 // ---------------------------------------------------------------------------
 // Service singletons
@@ -56,29 +57,6 @@ interface ApiError {
   error: string;
   details?: unknown;
   warnings?: string[];
-}
-
-// ---------------------------------------------------------------------------
-// asyncHandler: removes repetitive try/catch boilerplate from every route.
-// Any thrown/rejected error is funneled to a single JSON error response.
-// ---------------------------------------------------------------------------
-
-function asyncHandler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>
-): RequestHandler {
-  return (req, res, next) => {
-    fn(req, res, next).catch((err: any) => {
-      console.error(`[${req.method} ${req.originalUrl}]`, err);
-      if (!res.headersSent) {
-        const status = err?.statusCode ?? 500;
-        res.status(status).json({
-          success: false,
-          error: err?.message || 'Internal server error',
-        } satisfies ApiError);
-      }
-      next(err);
-    });
-  };
 }
 
 // ---------------------------------------------------------------------------
