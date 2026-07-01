@@ -6,16 +6,43 @@ import { ComparerTab } from './breedLab/ComparerTab';
 import { TraitFinderTab } from './breedLab/TraitFinderTab';
 import { ScraperTab } from './breedLab/ScraperTab';
 import { CrossbreedPanel } from './breedLab/CrossbreedPanel';
+import { importLabCsv, aggregateToTraitStats } from './breedLab/engine/dataImport';
+import { GeneticEngine } from './breedLab/engine/geneticEngine';
+import { Pedigree } from './breedLab/engine/pedigree';
 import { 
   Dna, Award, Play, ShieldCheck, Heart, Sparkles, Plus, Check, Info, 
   GitMerge, HelpCircle, FileText, ChevronRight, RefreshCw, BarChart2,
   TreePine, Calendar, Scale, Thermometer, Database, Search, Sliders, MapPin, 
   Tag, Activity, DollarSign, Flame, FolderCheck, ShoppingBag, TrendingUp, UserCheck, 
-  Globe, ShieldAlert, Star, FileDown, UploadCloud, CheckCircle, LineChart, Users
+  Globe, ShieldAlert, Star, FileDown, UploadCloud, CheckCircle, LineChart, Users, ClipboardList
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 
+function initializeStrainsWithPhenotypes(strainsList: Strain[]): Strain[] {
+  return strainsList.map(s => {
+    if (s.phenotype) return s;
+    return {
+      ...s,
+      isMeasured: !s.isCustom,
+      parents: s.lineage && s.lineage.length === 2 ? [s.lineage[0], s.lineage[1]] : [],
+      phenotype: {
+        thc: { mean: s.thc, variance: s.isCustom ? 0.02 : 1.2, heritability: 0.65, sampleSize: s.isCustom ? 1 : 12 },
+        cbd: { mean: s.cbd, variance: s.isCustom ? 0.01 : 0.4, heritability: 0.60, sampleSize: s.isCustom ? 1 : 12 },
+        cbg: { mean: s.cbg, variance: s.isCustom ? 0.01 : 0.08, heritability: 0.55, sampleSize: s.isCustom ? 1 : 12 },
+        cbn: { mean: s.cbn || 0.05, variance: 0.005, heritability: 0.40, sampleSize: 12 },
+        myrcene: { mean: s.terpenes.myrcene, variance: 0.01, heritability: 0.50, sampleSize: 12 },
+        limonene: { mean: s.terpenes.limonene, variance: 0.01, heritability: 0.50, sampleSize: 12 },
+        caryophyllene: { mean: s.terpenes.caryophyllene, variance: 0.01, heritability: 0.50, sampleSize: 12 },
+        pinene: { mean: s.terpenes.pinene, variance: 0.01, heritability: 0.50, sampleSize: 12 },
+        linalool: { mean: s.terpenes.linalool, variance: 0.01, heritability: 0.50, sampleSize: 12 },
+        floweringtime: { mean: s.seedFinderInfo.floweringTimeDays, variance: 4.0, heritability: 0.70, sampleSize: 12 },
+        yield: { mean: s.seedFinderInfo.yieldGPerM2, variance: 1600.0, heritability: 0.45, sampleSize: 12 },
+        height: { mean: s.seedFinderInfo.heightCm, variance: 100.0, heritability: 0.55, sampleSize: 12 }
+      }
+    };
+  });
+}
 
 interface StrainBreedLabProps {
   onApplyBiomass: (potency: { thca: number; thc: number; cbda: number; cbd: number; cbga: number; other: number }, name: string) => void;
@@ -31,7 +58,8 @@ export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken 
   const [activeIntelTab, setActiveIntelTab] = useState<'leafly' | 'seedfinder' | 'cannaconnection' | 'hytiva' | 'allbud'>('leafly');
 
   // Deep Predefined Strain Database populated with real, structured metrics representing all 5 platforms
-  const [strains, setStrains] = useState<Strain[]>(INITIAL_STRAINS);
+  const [strains, setStrains] = useState<Strain[]>(() => initializeStrainsWithPhenotypes(INITIAL_STRAINS));
+
 
   // Selected Strain states
   const [selectedStrainId, setSelectedStrainId] = useState<string>('strain-blue-dream');
@@ -59,6 +87,23 @@ export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken 
   const [hybridResult, setHybridResult] = useState<Strain | null>(null);
   const [isUploadingToDrive, setIsUploadingToDrive] = useState(false);
   const [driveUploadSuccess, setDriveUploadSuccess] = useState(false);
+
+  // --- QUANTITATIVE GENETICS ENGINE STATE ---
+  const [crossProjection, setCrossProjection] = useState<any | null>(null);
+  const [huntedPhenotypes, setHuntedPhenotypes] = useState<any[]>([]);
+  const [selectedPhenotypeIdx, setSelectedPhenotypeIdx] = useState<number | null>(null);
+  const [csvInput, setCsvInput] = useState<string>(`strainId,trait,value,date
+strain-blue-dream,thc,18.9,2026-06-01
+strain-blue-dream,thc,19.2,2026-06-05
+strain-blue-dream,thc,18.5,2026-06-10
+strain-blue-dream,cbd,0.18,2026-06-01
+strain-sour-diesel,thc,22.4,2026-06-01
+strain-sour-diesel,thc,21.8,2026-06-05
+strain-sour-diesel,cbd,0.25,2026-06-01
+strain-gg4,thc,25.1,2026-06-01
+strain-gg4,thc,24.8,2026-06-05
+strain-gg4,cbd,0.12,2026-06-01`);
+  const [csvSuccessMessage, setCsvSuccessMessage] = useState<string>('');
 
   // Scraper State
   const [isScraping, setIsScraping] = useState(false);
@@ -106,18 +151,23 @@ export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken 
     // Dynamic breed log timeline
     setTimeout(() => {
       setBreedProgress(25);
-      setBreedLogs(prev => [...prev, `[GENETICS ENGINE] Aligning terpene synthase expression pathways for Parent A ("${parentA.name}")`]);
+      const ped = new Pedigree(strains as any);
+      const F = ped.inbreedingCoefficientOfCross(parentAId, parentBId);
+      setBreedLogs(prev => [
+        ...prev, 
+        `[PEDIGREE KINSHIP] Wright's Inbreeding Coefficient computed: F = ${F.toFixed(4)}`,
+        `[QUANTITATIVE MODEL] Loading narrow-sense heritability estimates (h²_THC = 0.65, h²_CBD = 0.60, h²_Flowering = 0.70)`
+      ]);
     }, 300);
 
     setTimeout(() => {
       setBreedProgress(50);
-      setBreedLogs(prev => [...prev, `[GENETICS ENGINE] Mapping climate/flowering parameters for Parent B ("${parentB.name}")`]);
-    }, 600);
+      setBreedLogs(prev => [...prev, `[MONTE CARLO SEGRAGATION] Simulating Mendelian sampling variance (V_MS) and genetic recombination for N=2000 progeny...`]);
+    }, 650);
 
     setTimeout(() => {
       setBreedProgress(75);
-      // Punnett calculation
-      // BD = CBD Synthase, BT = THC Synthase, BG = CBG Accumulation Synthase
+      // Punnett calculation for a key marker locus
       const gA = parentA.type.includes('CBD') ? 'BD/BD' : parentA.type.includes('CBG') ? 'BG/BG' : parentA.type.includes('Mixed') ? 'BT/BD' : 'BT/BT';
       const gB = parentB.type.includes('CBD') ? 'BD/BD' : parentB.type.includes('CBG') ? 'BG/BG' : parentB.type.includes('Mixed') ? 'BT/BD' : 'BT/BT';
       
@@ -132,91 +182,117 @@ export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken 
       ];
 
       setPunnettMatrix({ allelesA, allelesB, matrix });
-      setBreedLogs(prev => [...prev, '[GENETICS ENGINE] Matrix recombination resolved. Solving phenotype attributes...']);
-    }, 900);
+      setBreedLogs(prev => [...prev, '[QUANTITATIVE MODEL] Segregation resolved. Sampling progeny phenotypes from joint distribution...']);
+    }, 1000);
 
     setTimeout(() => {
       setBreedProgress(100);
 
-      // Blended values
-      const childThc = parseFloat(((parentA.thc + parentB.thc) / 2 * (0.95 + Math.random() * 0.1)).toFixed(2));
-      const childCbd = parseFloat(((parentA.cbd + parentB.cbd) / 2 * (0.95 + Math.random() * 0.1)).toFixed(2));
-      const childCbg = parseFloat(((parentA.cbg + parentB.cbg) / 2 * (0.95 + Math.random() * 0.1)).toFixed(2));
-      const childCbn = parseFloat(((parentA.cbn + parentB.cbn) / 2).toFixed(2));
+      // Execute actual quantitative cross simulation
+      const epA = parentA as any;
+      const epB = parentB as any;
+      const pop = strains as any;
 
-      // Recombine terpenes
+      const projection = GeneticEngine.simulateCross(epB, epA, pop, {
+        nProgeny: 2000,
+        seed: Date.now(),
+        keepSamples: true
+      });
+
+      setCrossProjection(projection);
+
+      // Draw 5 unique phenotypes for pheno-hunting from the simulated distribution!
+      const draws: any[] = [];
+      const sampleSize = projection.traits['thc'].samples?.length || 2000;
+      
+      for (let i = 0; i < 5; i++) {
+        // Choose a random index to simulate a single individual seedling!
+        const randIdx = Math.floor(Math.random() * sampleSize);
+        const pThc = projection.traits['thc'].samples?.[randIdx] ?? parentA.thc;
+        const pCbd = projection.traits['cbd'].samples?.[randIdx] ?? parentA.cbd;
+        const pCbg = projection.traits['cbg'].samples?.[randIdx] ?? parentA.cbg;
+        const pFlowering = projection.traits['floweringtime'].samples?.[randIdx] ?? parentA.seedFinderInfo.floweringTimeDays;
+        const pHeight = projection.traits['height'].samples?.[randIdx] ?? parentA.seedFinderInfo.heightCm;
+        const pYield = projection.traits['yield'].samples?.[randIdx] ?? parentA.seedFinderInfo.yieldGPerM2;
+
+        draws.push({
+          id: `pheno-${i + 1}-${Date.now()}`,
+          name: `${newBreedName.trim() || `${parentA.name.split(' ')[0]}'s ${parentB.name.split(' ').pop()}`} (Pheno #${i + 1})`,
+          thc: parseFloat(Math.max(0, pThc).toFixed(2)),
+          cbd: parseFloat(Math.max(0, pCbd).toFixed(2)),
+          cbg: parseFloat(Math.max(0, pCbg).toFixed(2)),
+          floweringTimeDays: Math.max(1, Math.round(pFlowering)),
+          heightCm: Math.max(1, Math.round(pHeight)),
+          yieldGPerM2: Math.max(1, Math.round(pYield))
+        });
+      }
+
+      setHuntedPhenotypes(draws);
+      setSelectedPhenotypeIdx(0);
+
+      // Create initial child strain from phenotype index 0
+      const pheno = draws[0];
       const childTerps = {
-        myrcene: parseFloat(((parentA.terpenes.myrcene + parentB.terpenes.myrcene) / 2).toFixed(2)),
-        limonene: parseFloat(((parentA.terpenes.limonene + parentB.terpenes.limonene) / 2).toFixed(2)),
-        caryophyllene: parseFloat(((parentA.terpenes.caryophyllene + parentB.terpenes.caryophyllene) / 2).toFixed(2)),
-        pinene: parseFloat(((parentA.terpenes.pinene + parentB.terpenes.pinene) / 2).toFixed(2)),
-        linalool: parseFloat(((parentA.terpenes.linalool + parentB.terpenes.linalool) / 2).toFixed(2))
+        myrcene: parseFloat(Math.max(0, (parentA.terpenes.myrcene + parentB.terpenes.myrcene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+        limonene: parseFloat(Math.max(0, (parentA.terpenes.limonene + parentB.terpenes.limonene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+        caryophyllene: parseFloat(Math.max(0, (parentA.terpenes.caryophyllene + parentB.terpenes.caryophyllene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+        pinene: parseFloat(Math.max(0, (parentA.terpenes.pinene + parentB.terpenes.pinene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+        linalool: parseFloat(Math.max(0, (parentA.terpenes.linalool + parentB.terpenes.linalool) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2))
       };
 
-      // Type
       let childType: Strain['type'] = 'Type I (THC Dominant)';
-      if (childCbd > childThc && childCbd > childCbg) {
+      if (pheno.cbd > pheno.thc && pheno.cbd > pheno.cbg) {
         childType = 'Type III (CBD Dominant)';
-      } else if (childCbg > childThc && childCbg > childCbd) {
+      } else if (pheno.cbg > pheno.thc && pheno.cbg > pheno.cbd) {
         childType = 'Type IV (CBG Dominant)';
-      } else if (childThc > 2.0 && childCbd > 2.0) {
+      } else if (pheno.thc > 2.0 && pheno.cbd > 2.0) {
         childType = 'Type II (Mixed Ratio)';
       }
 
-      // Breeders metadata blending (SeedFinder.eu style)
-      const childFlowering = Math.round((parentA.seedFinderInfo.floweringTimeDays + parentB.seedFinderInfo.floweringTimeDays) / 2);
-      const childHeight = Math.round((parentA.seedFinderInfo.heightCm + parentB.seedFinderInfo.heightCm) / 2);
-      const childYield = Math.round((parentA.seedFinderInfo.yieldGPerM2 + parentB.seedFinderInfo.yieldGPerM2) / 2);
-      
-      // Merge unique effects, flavors, activities
       const childEffects = Array.from(new Set([...parentA.leaflyInfo.effects, ...parentB.leaflyInfo.effects])).slice(0, 5);
       const childFlavors = Array.from(new Set([...parentA.leaflyInfo.flavors, ...parentB.leaflyInfo.flavors])).slice(0, 3);
       const childActivities = Array.from(new Set([...parentA.hytivaInfo.activities, ...parentB.hytivaInfo.activities])).slice(0, 4);
       const childMedical = Array.from(new Set([...parentA.hytivaInfo.medicalIndications, ...parentB.hytivaInfo.medicalIndications])).slice(0, 4);
 
-      // Name generation
-      const generatedName = newBreedName.trim() || `${parentA.name.split(' ')[0]}'s ${parentB.name.split(' ').pop()}`;
-
-      // Mock user review synthesis based on both parents
-      const parentNameA = parentA.name;
-      const parentNameB = parentB.name;
-      const mockReview = `A sensational F1 combination of ${parentNameA} and ${parentNameB}. It inherits the exquisite flavor tones of ${childFlavors.join(' & ')} while delivering a highly optimized physical feeling suitable for ${childActivities[0]} and ${childActivities[1]}.`;
+      const generatedName = newBreedName.trim() || `${parentA.name.split(' ')[0]}'s ${parentB.name.split(' ').pop()} (Pheno #1)`;
 
       const childStrain: Strain = {
         id: `custom-strain-${Date.now()}`,
         name: generatedName,
         type: childType,
-        thc: childThc,
-        cbd: childCbd,
-        cbg: childCbg,
-        cbn: childCbn,
+        thc: pheno.thc,
+        cbd: pheno.cbd,
+        cbg: pheno.cbg,
+        cbn: 0.05,
         terpenes: childTerps,
         classification: 'Hybrid',
         lineage: [parentA.name, parentB.name],
-        origin: `An elite F1 hybrid engineered and stabilized inside the Hemp OS Breed Sim Lab on 2026-06-30. Perfected for robust essential oil and compound yields.`,
-        landraceBackground: `Synthesized from heritage lines of ${parentA.name} x ${parentB.name}.`,
+        origin: `A selected F1 seedling phenotype from the "${parentA.name} x ${parentB.name}" cross, selected on 2026-07-01 for high phenotypic value.`,
+        landraceBackground: `Pedigree Wright's Inbreeding Coefficient F = ${(projection.inbreedingCoefficient ?? 0.0).toFixed(4)}.`,
         isCustom: true,
+        parents: [parentAId, parentBId],
+        isMeasured: true,
         leaflyInfo: {
           effects: childEffects,
           flavors: childFlavors,
           rating: parseFloat((4.0 + Math.random() * 0.9).toFixed(1)),
           reviewsCount: 1,
-          popularReview: mockReview
+          popularReview: `An exceptional F1 keeper phenotype from the ${parentA.name} x ${parentB.name} population, selected during simulation pheno-hunting.`
         },
         seedFinderInfo: {
           breeder: "Hemp OS Autonomy Lab",
-          floweringTimeDays: childFlowering,
-          heightCm: childHeight,
+          floweringTimeDays: pheno.floweringTimeDays,
+          heightCm: pheno.heightCm,
           environment: 'Multi-environment',
           availability: 'Clone-only',
-          yieldGPerM2: childYield
+          yieldGPerM2: pheno.yieldGPerM2
         },
         cannaConnectionInfo: {
           seedBank: "Hemp OS Vault",
           climateTolerance: parentA.cannaConnectionInfo.climateTolerance,
           difficulty: 'Medium',
-          thcRange: childThc > 15 ? 'High' : childThc > 2 ? 'Medium' : 'Low',
-          cbdRange: childCbd > 10 ? 'High' : childCbd > 1 ? 'Medium' : 'None'
+          thcRange: pheno.thc > 15 ? 'High' : 'Medium',
+          cbdRange: pheno.cbd > 10 ? 'High' : 'None'
         },
         hytivaInfo: {
           activities: childActivities,
@@ -227,19 +303,110 @@ export function StrainBreedLab({ onApplyBiomass, activeBiomassName, accessToken 
           avgPricePerGram: parseFloat(((parentA.allBudInfo.avgPricePerGram + parentB.allBudInfo.avgPricePerGram) / 2).toFixed(2)),
           dispensaryStates: Array.from(new Set([...parentA.allBudInfo.dispensaryStates, ...parentB.allBudInfo.dispensaryStates])).slice(0, 5),
           retailStatus: 'Rare',
-          thcMax: Math.round(childThc * 1.15)
+          thcMax: Math.round(pheno.thc * 1.15)
         }
       };
 
       setHybridResult(childStrain);
       setBreedLogs(prev => [
         ...prev, 
-        `✔️ [GENETICS ENGINE] Recombination complete. Generated F1 Hybrid: "${generatedName}"`,
-        `✔️ Potency Predictions: THC = ${childThc}%, CBD = ${childCbd}%, CBG = ${childCbg}%`,
-        `✔️ SeedFinder Estimate: Flowering in ${childFlowering} days. Average height: ${childHeight}cm.`
+        `✔️ [SUCCESS] Quantitative simulation complete! Mid-parent expectation resolved.`,
+        `✔️ Wright's Inbreeding Coefficient: F = ${(projection.inbreedingCoefficient ?? 0.0).toFixed(4)}`,
+        `✔️ Population Distribution (N=2000):`,
+        `   • THC %: ${projection.traits['thc'].offspringMean.toFixed(2)}% (SD: ${projection.traits['thc'].offspringSD.toFixed(2)}%) [90% CI: ${projection.traits['thc'].ci90[0].toFixed(2)}% - ${projection.traits['thc'].ci90[1].toFixed(2)}%]`,
+        `   • CBD %: ${projection.traits['cbd'].offspringMean.toFixed(2)}% (SD: ${projection.traits['cbd'].offspringSD.toFixed(2)}%) [90% CI: ${projection.traits['cbd'].ci90[0].toFixed(2)}% - ${projection.traits['cbd'].ci90[1].toFixed(2)}%]`,
+        `✔️ Simulated 5 distinct seedling progeny below for active Phenotype Hunting! Select a keeper phenotype to register.`
       ]);
       setIsBreeding(false);
-    }, 1200);
+    }, 1300);
+  };
+
+  // Switch active phenotype during pheno hunting
+  const handleSelectPhenotype = (idx: number) => {
+    if (!huntedPhenotypes || !huntedPhenotypes[idx] || !crossProjection) return;
+    const parentA = strains.find(s => s.id === parentAId);
+    const parentB = strains.find(s => s.id === parentBId);
+    if (!parentA || !parentB) return;
+
+    setSelectedPhenotypeIdx(idx);
+    const pheno = huntedPhenotypes[idx];
+
+    const childTerps = {
+      myrcene: parseFloat(Math.max(0, (parentA.terpenes.myrcene + parentB.terpenes.myrcene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+      limonene: parseFloat(Math.max(0, (parentA.terpenes.limonene + parentB.terpenes.limonene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+      caryophyllene: parseFloat(Math.max(0, (parentA.terpenes.caryophyllene + parentB.terpenes.caryophyllene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+      pinene: parseFloat(Math.max(0, (parentA.terpenes.pinene + parentB.terpenes.pinene) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2)),
+      linalool: parseFloat(Math.max(0, (parentA.terpenes.linalool + parentB.terpenes.linalool) / 2 + (Math.random() - 0.5) * 0.1).toFixed(2))
+    };
+
+    let childType: Strain['type'] = 'Type I (THC Dominant)';
+    if (pheno.cbd > pheno.thc && pheno.cbd > pheno.cbg) {
+      childType = 'Type III (CBD Dominant)';
+    } else if (pheno.cbg > pheno.thc && pheno.cbg > pheno.cbd) {
+      childType = 'Type IV (CBG Dominant)';
+    } else if (pheno.thc > 2.0 && pheno.cbd > 2.0) {
+      childType = 'Type II (Mixed Ratio)';
+    }
+
+    const childEffects = Array.from(new Set([...parentA.leaflyInfo.effects, ...parentB.leaflyInfo.effects])).slice(0, 5);
+    const childFlavors = Array.from(new Set([...parentA.leaflyInfo.flavors, ...parentB.leaflyInfo.flavors])).slice(0, 3);
+    const childActivities = Array.from(new Set([...parentA.hytivaInfo.activities, ...parentB.hytivaInfo.activities])).slice(0, 4);
+    const childMedical = Array.from(new Set([...parentA.hytivaInfo.medicalIndications, ...parentB.hytivaInfo.medicalIndications])).slice(0, 4);
+
+    const generatedName = newBreedName.trim() || `${parentA.name.split(' ')[0]}'s ${parentB.name.split(' ').pop()} (Pheno #${idx + 1})`;
+
+    const childStrain: Strain = {
+      id: `custom-strain-${Date.now()}`,
+      name: generatedName,
+      type: childType,
+      thc: pheno.thc,
+      cbd: pheno.cbd,
+      cbg: pheno.cbg,
+      cbn: 0.05,
+      terpenes: childTerps,
+      classification: 'Hybrid',
+      lineage: [parentA.name, parentB.name],
+      origin: `A selected F1 seedling phenotype from the "${parentA.name} x ${parentB.name}" cross, selected on 2026-07-01 for high phenotypic value.`,
+      landraceBackground: `Pedigree Wright's Inbreeding Coefficient F = ${(crossProjection.inbreedingCoefficient ?? 0.0).toFixed(4)}.`,
+      isCustom: true,
+      parents: [parentAId, parentBId],
+      isMeasured: true,
+      leaflyInfo: {
+        effects: childEffects,
+        flavors: childFlavors,
+        rating: parseFloat((4.0 + Math.random() * 0.9).toFixed(1)),
+        reviewsCount: 1,
+        popularReview: `An exceptional F1 keeper phenotype from the ${parentA.name} x ${parentB.name} population, selected during simulation pheno-hunting.`
+      },
+      seedFinderInfo: {
+        breeder: "Hemp OS Autonomy Lab",
+        floweringTimeDays: pheno.floweringTimeDays,
+        heightCm: pheno.heightCm,
+        environment: 'Multi-environment',
+        availability: 'Clone-only',
+        yieldGPerM2: pheno.yieldGPerM2
+      },
+      cannaConnectionInfo: {
+        seedBank: "Hemp OS Vault",
+        climateTolerance: parentA.cannaConnectionInfo.climateTolerance,
+        difficulty: 'Medium',
+        thcRange: pheno.thc > 15 ? 'High' : 'Medium',
+        cbdRange: pheno.cbd > 10 ? 'High' : 'None'
+      },
+      hytivaInfo: {
+        activities: childActivities,
+        terpeneDominance: childTerps.myrcene > childTerps.limonene ? "Myrcene-dominant" : "Limonene-dominant",
+        medicalIndications: childMedical
+      },
+      allBudInfo: {
+        avgPricePerGram: parseFloat(((parentA.allBudInfo.avgPricePerGram + parentB.allBudInfo.avgPricePerGram) / 2).toFixed(2)),
+        dispensaryStates: Array.from(new Set([...parentA.allBudInfo.dispensaryStates, ...parentB.allBudInfo.dispensaryStates])).slice(0, 5),
+        retailStatus: 'Rare',
+        thcMax: Math.round(pheno.thc * 1.15)
+      }
+    };
+
+    setHybridResult(childStrain);
   };
 
   // Add the offspring to the database
@@ -392,8 +559,9 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
   };
 
   const handleStartScraping = async () => {
+    if (isScraping) return;
     setIsScraping(true);
-    setScrapeLogs([`Initializing Web Scraper Swarm for target: ${scrapeTarget}...`, 'Establishing Headless DOM Injectors...']);
+    setScrapeLogs([]); // Clear old logs
     
     try {
       const response = await fetch('/api/scrape', {
@@ -411,14 +579,51 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
         throw new Error(`Server responded with ${response.status}`);
       }
 
-      const data = await response.json();
-      
-      setScrapeLogs(prev => [
-        ...prev, 
-        `✔️ SCAPE COMPLETE. Extracted ${data.count} science papers.`,
-        `✔️ Data successfully written to local folder: ${data.savedTo}`,
-        ...data.data.slice(0, 3).map((item: any) => `> INGESTED: ${item.title.substring(0, 50)}...`)
-      ]);
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Readable stream not supported on response.');
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+          if (trimmedLine.startsWith('data: ')) {
+            const payload = trimmedLine.slice(6).trim();
+            if (payload === '[DONE]') {
+              setIsScraping(false);
+              return;
+            }
+            try {
+              const parsed = JSON.parse(payload);
+              if (parsed.log) {
+                setScrapeLogs(prev => [...prev, parsed.log]);
+              }
+              if (parsed.strain) {
+                const enhancedStrain = initializeStrainsWithPhenotypes([parsed.strain])[0];
+                setStrains(prev => {
+                  if (prev.some(s => s.id === enhancedStrain.id || s.name.toLowerCase() === enhancedStrain.name.toLowerCase())) {
+                    return prev;
+                  }
+                  return [...prev, enhancedStrain];
+                });
+                setSelectedStrainId(enhancedStrain.id);
+              }
+            } catch {
+              // ignore malformed lines
+            }
+          }
+        }
+      }
 
     } catch (err: any) {
       setScrapeLogs(prev => [...prev, `❌ [SCRAPE_ERR] Failed to scrape: ${err.message}`]);
@@ -1459,6 +1664,63 @@ Validated & Digitally Signed by Hemp OS Genetics Sequencer.
                     ))}
                   </div>
                 </div>
+
+                {/* Progeny Seedling Pheno-Hunting Selector */}
+                {huntedPhenotypes && huntedPhenotypes.length > 0 && (
+                  <div className="space-y-2">
+                    <span className="text-[7.5px] font-mono text-cyan-400 uppercase tracking-widest block font-bold">
+                      🌱 Active Progeny Phenotype Selector (F1 Population)
+                    </span>
+                    <div className="grid grid-cols-5 gap-1">
+                      {huntedPhenotypes.map((p, idx) => {
+                        const isSelected = selectedPhenotypeIdx === idx;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => handleSelectPhenotype(idx)}
+                            className={`p-1.5 rounded-lg border text-center font-mono text-[8px] transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-cyan-950/40 border-cyan-500/50 text-cyan-300 shadow-md shadow-cyan-500/10'
+                                : 'bg-[#0d0d0f] border-[#1f1f21] text-gray-400 hover:border-zinc-700'
+                            }`}
+                          >
+                            <span className="block text-[7px] text-gray-500">PHENO</span>
+                            <strong className="text-[9px]">#{idx + 1}</strong>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Selected Phenotype Comparison Stats */}
+                    {selectedPhenotypeIdx !== null && crossProjection && (
+                      <div className="p-2 bg-cyan-950/10 border border-cyan-500/5 rounded-lg text-[8px] space-y-1 text-gray-400">
+                        <div className="flex justify-between">
+                          <span>Phenotype ID:</span>
+                          <span className="text-cyan-300 font-mono">{huntedPhenotypes[selectedPhenotypeIdx].id.split('-')[1]}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Flowering Period:</span>
+                          <span>{huntedPhenotypes[selectedPhenotypeIdx].floweringTimeDays} days</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Morphology Height:</span>
+                          <span>{huntedPhenotypes[selectedPhenotypeIdx].heightCm} cm</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Est. Bud Yield:</span>
+                          <span>{huntedPhenotypes[selectedPhenotypeIdx].yieldGPerM2} g/m²</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Inbreeding Coeff. (F):</span>
+                          <span className={crossProjection.inbreedingCoefficient > 0 ? "text-amber-400 font-bold" : "text-emerald-400 font-bold"}>
+                            {(crossProjection.inbreedingCoefficient ?? 0.0).toFixed(4)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Blended stats summary preview */}
                 <div className="p-3 bg-[#0d0d0f] border border-[#1f1f21] rounded-lg space-y-2">

@@ -34,6 +34,11 @@ app.use('/api/drive', driveRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/ollama', ollamaRouter);
 app.use('/api/ingest', ingestRouter);
+app.post('/api/scrape', (req, res, next) => {
+  req.url = '/scrape';
+  ingestRouter(req, res, next);
+});
+
 
 export async function attachFrontend() {
   if (env.NODE_ENV !== 'production') {

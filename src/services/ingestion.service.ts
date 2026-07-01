@@ -1,5 +1,29 @@
+import { OllamaService } from './ollama.service.ts';
+
+export interface IngestedDocumentWithEmbedding {
+  metadata: {
+    id: string;
+    title: string;
+    author: string;
+    date: string;
+    sizeBytes: number;
+    mimeType: string;
+  };
+  text: string;
+  chapters: { title: string; content: string }[];
+  citations: string[];
+  indexedTopics: string[];
+  embedding?: number[];
+}
+
 export class IngestionService {
-  async ingest(token: string, fileId: string, fileName: string, mimeType: string) {
+  private ollama: OllamaService;
+
+  constructor(ollama?: OllamaService) {
+    this.ollama = ollama || new OllamaService();
+  }
+
+  async ingest(token: string, fileId: string, fileName: string, mimeType: string): Promise<IngestedDocumentWithEmbedding> {
     let extractedText = '';
 
     if (mimeType === 'application/vnd.google-apps.document') {
@@ -40,6 +64,23 @@ export class IngestionService {
       { title: 'Chapter 2: Methods & Parameter Space', content: extractedText.substring(300, 600) || 'Thermodynamic modeling parameters.' }
     ];
 
+    // Generate embedding for the full text (truncate to ~8000 chars to fit context limits)
+    let embedding: number[] | undefined;
+    try {
+      const embedResponse = await this.ollama.embeddings({
+        model: 'nomic-embed-text',
+        input: extractedText.slice(0, 8000),
+      });
+      if (embedResponse && embedResponse.embedding) {
+        embedding = embedResponse.embedding;
+      } else if (embedResponse && Array.isArray(embedResponse.embeddings)) {
+        embedding = embedResponse.embeddings[0];
+      }
+    } catch (err) {
+      console.warn('Embedding generation failed for', fileName, err);
+      // Fallback: search will use keyword matching if embedding is undefined
+    }
+
     return {
       metadata: {
         id: fileId,
@@ -52,7 +93,9 @@ export class IngestionService {
       text: extractedText,
       chapters,
       citations: citations.length > 0 ? citations : ['[Hemp-OS Research, 2026]', '[Standard Phytochem, 2023]'],
-      indexedTopics: ['Winterization', 'Supercritical CO2', 'Thermodynamics', 'Arrhenius Kinetics', 'Solvent Residuals']
+      indexedTopics: ['Winterization', 'Supercritical CO2', 'Thermodynamics', 'Arrhenius Kinetics', 'Solvent Residuals'],
+      embedding
     };
   }
 }
+

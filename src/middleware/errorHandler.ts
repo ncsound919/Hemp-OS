@@ -8,7 +8,7 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
     return res.status(400).json({
       success: false,
       error: 'Validation failed',
-      details: err.flatten(),
+      details: (err as ZodError).flatten(),
       requestId: req.headers['x-request-id'],
     });
   }

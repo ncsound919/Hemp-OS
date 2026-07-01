@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+import { AgenticProvenanceLogger } from '../provenance/AgenticProvenanceLogger.ts';
+import { AgenticThoughtChain, StagedHypothesis } from '../types/provenance.types.ts';
 
 // Define structures for our Windows elements
 interface WindowsService {
@@ -67,6 +69,7 @@ interface WindowsIntegrationLayerProps {
   setActiveStageId: (id: string) => void;
   runSimulation: () => void;
   accessToken: string | null;
+  provenanceLogger?: AgenticProvenanceLogger;
 }
 
 export function WindowsIntegrationLayer({
@@ -77,11 +80,26 @@ export function WindowsIntegrationLayer({
   activeStageId,
   setActiveStageId,
   runSimulation,
-  accessToken
+  accessToken,
+  provenanceLogger
 }: WindowsIntegrationLayerProps) {
   
   // Tab within Windows Integration Layer
-  const [winTab, setWinTab] = useState<'copilot' | 'services' | 'powershell' | 'wsl' | 'vss' | 'eventlog'>('copilot');
+  const [winTab, setWinTab] = useState<'copilot' | 'services' | 'powershell' | 'wsl' | 'vss' | 'eventlog' | 'provenance'>('copilot');
+
+  // Provenance logger instance and state
+  const loggerInstance = useRef(provenanceLogger || new AgenticProvenanceLogger());
+  const [pendingStages, setPendingStages] = useState<Array<{ id: string; summary: string; record: StagedHypothesis }>>([]);
+
+  const refreshPendingStages = async () => {
+    const pending = await loggerInstance.current.getPendingReviews();
+    setPendingStages(pending);
+  };
+
+  // Refresh pending stages on tab change
+  useEffect(() => {
+    refreshPendingStages();
+  }, [winTab]);
 
   // --- COPILOT INTERACTIVE CONSOLE ---
   const [copilotInput, setCopilotInput] = useState('');
@@ -147,36 +165,31 @@ export function WindowsIntegrationLayer({
     }, 1100);
   };
 
-  const executeCopilotAction = (act: { type: string; payload: any }) => {
+  const executeCopilotAction = async (act: { type: string; payload: any }) => {
     if (act.type === 'UPDATE_DECARB_TEMP') {
-      // Find stage and update its config temperature
-      setGraph((prev: any) => {
-        const stages = prev.stages.map((st: any) => {
-          if (st.id === 'stage-decarb' || st.type.toLowerCase().includes('decarb')) {
-            return {
-              ...st,
-              config: {
-                ...st.config,
-                temperatureC: act.payload.temp,
-                tempC: act.payload.temp,
-              }
-            };
-          }
-          return st;
-        });
-        return { ...prev, stages };
-      });
-      // Simulate run
-      setTimeout(() => runSimulation(), 100);
-      
+      const targetTemp = act.payload.temp || 125;
+      const thoughtChain: AgenticThoughtChain = {
+        step: 1,
+        timestamp: Date.now(),
+        module: 'Architect',
+        hypothesis: `Copilot suggested calibrating decarboxylation thermal stage configuration to ${targetTemp}°C to optimize decarboxylation kinetics and preserve cannabinoid potency.`,
+        supporting_evidence: ['Windows host telemetry', 'Copilot thermodynamic solver calculus'],
+        parameter_delta: {
+          decarboxylation: { temperatureCelsius: targetTemp, temperatureC: targetTemp, tempC: targetTemp }
+        }
+      };
+
+      const stageId = await loggerInstance.current.stageHypothesis(thoughtChain, thoughtChain.parameter_delta);
+      await refreshPendingStages();
+
       // Post validation response
       setCopilotChat(prev => [...prev, {
         sender: 'copilot',
-        text: `✔️ **Copilot Action Succeeded!** Calibrated the Decarboxylation thermal stage config. Temperature updated to **125°C** and thermodynamic solver has finished recalculating phase split dynamics.`
+        text: `📝 **Hypothesis Staged!** Staged decarboxylation temperature adjustment to **${targetTemp}°C** under Stage ID \`${stageId}\`.\n\nPlease review and approve this change in the **Provenance Audit** tab before it is executed on the flowsheet.`
       }]);
 
       // Add to event logs
-      addEventLogEntry('Information', 'ScientificOS', 2011, `Copilot API successfully updated stage calibration temperature to 125C. Solver recalculated successfully.`);
+      addEventLogEntry('Information', 'ScientificOS', 2011, `Copilot AI successfully staged hypothesis ${stageId} for stage temperature adjustment (${targetTemp}°C).`);
     } 
     else if (act.type === 'CREATE_VSS_SNAPSHOT') {
       triggerVssSnapshotCreation();
@@ -189,30 +202,25 @@ export function WindowsIntegrationLayer({
       addEventLogEntry('Information', 'System', 7002, `WSL diagnostic sweep completed by local service watchdog.`);
     }
     else if (act.type === 'HEAL_EVENT_LOGS') {
-      // Revert carbon dioxide extraction to stable pressures
-      setGraph((prev: any) => {
-        const stages = prev.stages.map((st: any) => {
-          if (st.id === 'stage-extraction' || st.type.toLowerCase().includes('extract')) {
-            return {
-              ...st,
-              config: {
-                ...st.config,
-                pressureBar: 220, // default stable
-                co2FlowRate: 15.0
-              }
-            };
-          }
-          return st;
-        });
-        return { ...prev, stages };
-      });
-      setTimeout(() => runSimulation(), 100);
+      const thoughtChain: AgenticThoughtChain = {
+        step: 1,
+        timestamp: Date.now(),
+        module: 'Architect',
+        hypothesis: `Self-healing trigger suggested stabilizing CO2 extraction pressure boundary variables to 220 Bar and flow rate to 15.0 L/min to clear phase split warning.`,
+        supporting_evidence: ['Boundary violation alert', 'System auto-heal trigger'],
+        parameter_delta: {
+          extraction: { pressureBar: 220, co2FlowRate: 15.0 }
+        }
+      };
+
+      const stageId = await loggerInstance.current.stageHypothesis(thoughtChain, thoughtChain.parameter_delta);
+      await refreshPendingStages();
 
       setCopilotChat(prev => [...prev, {
         sender: 'copilot',
-        text: `✔️ **Self-Healing Applied**: Stabilized CO2 extraction pressure boundary variables to **220 Bar**. Phase split warning successfully cleared from active event registries.`
+        text: `📝 **Hypothesis Staged!** Staged self-healing parameters under Stage ID \`${stageId}\`. Go to the **Provenance Audit** tab to review and apply.`
       }]);
-      addEventLogEntry('Success Audit', 'Security', 1002, `Self-healing policy resolved. Pressure stabilized to 220 Bar.`);
+      addEventLogEntry('Success Audit', 'Security', 1002, `Self-healing policy staged hypothesis ${stageId} successfully.`);
     }
   };
 
@@ -335,7 +343,7 @@ export function WindowsIntegrationLayer({
     psEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [psHistory]);
 
-  const handlePsCommand = () => {
+  const handlePsCommand = async () => {
     if (!psInput.trim()) return;
     const cmd = psInput.trim();
     let out: string[] = [];
@@ -409,32 +417,29 @@ export function WindowsIntegrationLayer({
         tempVal = parseFloat(tokens[tempArgIdx + 1]);
       }
 
-      // Update configuration stage temperature dynamically
-      setGraph((prev: any) => {
-        const stages = prev.stages.map((st: any) => {
-          if (st.name.toLowerCase().includes(stageName.toLowerCase()) || st.id.includes(stageName.toLowerCase())) {
-            return {
-              ...st,
-              config: {
-                ...st.config,
-                temperatureC: tempVal,
-                tempC: tempVal,
-              }
-            };
-          }
-          return st;
-        });
-        return { ...prev, stages };
-      });
-      setTimeout(() => runSimulation(), 100);
+      // Instead of applying immediately, stage hypothesis!
+      const normalizedStageKey = stageName.toLowerCase().includes('decarb') ? 'decarboxylation' : stageName.toLowerCase();
+      const thoughtChain: AgenticThoughtChain = {
+        step: 1,
+        timestamp: Date.now(),
+        module: 'Architect',
+        hypothesis: `PowerShell Run-Experiment suggested calibrating ${stageName} stage configuration to ${tempVal}°C to test thermodynamic boundary limits.`,
+        supporting_evidence: ['PowerShell Session CLI', 'Windows host environment telemetry'],
+        parameter_delta: {
+          [normalizedStageKey]: { temperatureCelsius: tempVal, temperatureC: tempVal, tempC: tempVal }
+        }
+      };
+
+      const stageId = await loggerInstance.current.stageHypothesis(thoughtChain, thoughtChain.parameter_delta);
+      await refreshPendingStages();
 
       out = [
-        '✔️ Triggering Experiment Campaign on Stage: ' + stageName,
-        'Setting parameter config update: target value = ' + tempVal,
-        'Status: Command successfully piped to local socket.',
-        'Kernel physical solver executed successfully. Purity & yield predictions recalculated.'
+        '📝 Hypothesis successfully staged under ID: ' + stageId,
+        'Setting parameters staged: Stage = ' + stageName + ', target temperature = ' + tempVal + '°C',
+        'Status: Staging succeeded in Provenance system.',
+        'Action Required: Please review and approve this hypothesis in the Provenance Audit tab before execution.'
       ];
-      addEventLogEntry('Information', 'ScientificOS', 2012, `PowerShell PowerShell cmdlet 'Run-Experiment' forced stage calibration change.`);
+      addEventLogEntry('Information', 'ScientificOS', 2012, `PowerShell cmdlet 'Run-Experiment' staged hypothesis ${stageId} for ${stageName} stage temperature adjustment (${tempVal}C).`);
     } else if (primaryCmd === 'invoke-calibration') {
       out = [
         '✔️ Initializing zero-drift digital calibration sweep...',
@@ -595,7 +600,7 @@ export function WindowsIntegrationLayer({
     setIsCreatingSnapshot(true);
     addEventLogEntry('Information', 'System', 5013, `Volume Shadow Copy Service (VSS) received snapshot query for volume ${activeVolume}`);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const snapId = `VSS-SNAP-${new Date().toISOString().substring(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
       const newSnap: VssSnapshot = {
         id: snapId,
@@ -613,6 +618,18 @@ export function WindowsIntegrationLayer({
 
       setVssSnapshots(prev => [newSnap, ...prev]);
       setIsCreatingSnapshot(false);
+
+      // Record as Provenance Checkpoint
+      const thoughtChain: AgenticThoughtChain = {
+        step: 1,
+        timestamp: Date.now(),
+        module: 'Auditor',
+        hypothesis: `VSS Snapshot ${snapId} created for volume ${activeVolume} to preserve feedstock state.`,
+        supporting_evidence: [`Biomass Profile: ${biomass.name}`, `Active Flowsheet Stage: ${activeStageId}`],
+        parameter_delta: {}
+      };
+      await loggerInstance.current.stageHypothesis(thoughtChain, {});
+      await refreshPendingStages();
 
       setCopilotChat(prev => [...prev, {
         sender: 'copilot',
@@ -755,7 +772,8 @@ export function WindowsIntegrationLayer({
             { id: 'powershell', label: 'PowerShell Terminal', icon: TerminalIcon, color: 'text-[#38bdf8]', desc: 'Scientific Cmdlet Deck' },
             { id: 'wsl', label: 'WSL2 & Nix Compute', icon: Boxes, color: 'text-cyan-400', desc: 'SciPy & SymPy Container' },
             { id: 'vss', label: 'Shadow Copies (VSS)', icon: HardDrive, color: 'text-amber-400', desc: 'Time-Travel Rollback' },
-            { id: 'eventlog', label: 'Diagnostics & Event Log', icon: FileText, color: 'text-rose-400', desc: 'System Telemetry Registry' }
+            { id: 'eventlog', label: 'Diagnostics & Event Log', icon: FileText, color: 'text-rose-400', desc: 'System Telemetry Registry' },
+            { id: 'provenance', label: 'Provenance Audit', icon: ShieldCheck, color: 'text-emerald-400', desc: 'Staged Hypothesis Review' }
           ].map(tab => {
             const Icon = tab.icon;
             const isSel = winTab === tab.id;
@@ -1295,6 +1313,170 @@ export function WindowsIntegrationLayer({
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {/* VIEW 7: PROVENANCE AUDIT */}
+          {winTab === 'provenance' && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center pb-2 border-b border-[#1f1f21]">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                    Staged Hypothesis Audit & Provenance Review
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={refreshPendingStages}
+                  className="text-[9px] bg-[#121214] border border-[#1f1f21] px-2.5 py-1 rounded-xl text-gray-400 hover:text-white font-mono flex items-center gap-1.5 cursor-pointer transition-all hover:bg-[#1b1b1e]"
+                >
+                  <RefreshCw className="w-3 h-3" /> Refresh Staged
+                </button>
+              </div>
+
+              {pendingStages.length === 0 ? (
+                <div className="text-gray-500 text-xs font-mono p-12 text-center border border-dashed border-[#1f1f21] rounded-2xl bg-[#0a0a0b]/50">
+                  <Fingerprint className="w-8 h-8 text-gray-700 mx-auto mb-3" />
+                  No pending scientific hypotheses staged for verification.
+                  <p className="text-[10px] text-gray-600 mt-1 max-w-md mx-auto font-sans">
+                    Try suggesting a parameter change to Copilot or running an experimental recipe in PowerShell to stage a new scientific hypothesis.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {pendingStages.map((item) => {
+                    const record = item.record;
+                    const id = item.id;
+                    const hasHighRisk = record.riskScore > 5 || record.requiresHumanReview;
+                    return (
+                      <div 
+                        key={id} 
+                        className={`border rounded-2xl overflow-hidden bg-[#0d0d0f] transition-all ${
+                          hasHighRisk ? 'border-amber-900/30 hover:border-amber-700/50' : 'border-[#1f1f21] hover:border-[#2d2d30]'
+                        }`}
+                      >
+                        {/* Header banner */}
+                        <div className={`px-4 py-2.5 flex items-center justify-between border-b ${
+                          hasHighRisk ? 'bg-amber-950/10 border-amber-900/30' : 'bg-[#121214] border-[#1f1f21]'
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono font-bold bg-[#1b1b1e] text-blue-400 border border-[#2d2d30] px-2 py-0.5 rounded">
+                              {id}
+                            </span>
+                            <span className="text-[10px] font-mono text-gray-400">
+                              Staged by <strong className="text-gray-200">{record.thoughtChain.module}</strong> • {new Date(record.createdAt).toLocaleString()}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border ${
+                              record.riskScore > 5 
+                                ? 'bg-red-950/20 border-red-900/50 text-red-400' 
+                                : 'bg-emerald-950/20 border-emerald-900/50 text-emerald-400'
+                            }`}>
+                              Risk: {record.riskScore}/10
+                            </span>
+                            {record.requiresHumanReview && (
+                              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-amber-950/20 border border-amber-900/50 text-amber-400 flex items-center gap-1 animate-pulse">
+                                <ShieldAlert className="w-2.5 h-2.5" /> Human Gate
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Details */}
+                        <div className="p-4 space-y-3.5">
+                          <div>
+                            <span className="text-[9px] uppercase tracking-wider font-mono text-gray-500 block mb-1">Proposed Hypothesis / Theory</span>
+                            <p className="text-xs text-gray-200 font-sans leading-relaxed bg-[#121214] border border-[#1f1f21] p-3 rounded-xl font-medium">
+                              {record.thoughtChain.hypothesis}
+                            </p>
+                          </div>
+
+                          {record.thoughtChain.supporting_evidence && record.thoughtChain.supporting_evidence.length > 0 && (
+                            <div>
+                              <span className="text-[9px] uppercase tracking-wider font-mono text-gray-500 block mb-1">Supporting Telemetry / Context</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {record.thoughtChain.supporting_evidence.map((evidence, idx) => (
+                                  <span key={idx} className="text-[9px] font-mono bg-[#121214] border border-[#1f1f21] text-gray-400 px-2.5 py-0.5 rounded-full">
+                                    • {evidence}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Parameter Delta / Flowsheet Mutation */}
+                          {record.parameterDelta && Object.keys(record.parameterDelta).length > 0 && (
+                            <div>
+                              <span className="text-[9px] uppercase tracking-wider font-mono text-gray-500 block mb-1">Proposed Parameter Delta</span>
+                              <pre className="text-[10px] font-mono text-emerald-400 bg-[#070708] border border-[#1a1a1c] p-3 rounded-xl overflow-x-auto max-h-40">
+                                {JSON.stringify(record.parameterDelta, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+
+                          {/* Approval / Rejection action buttons */}
+                          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#121214]">
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                await loggerInstance.current.humanReviewsStaging(
+                                  id,
+                                  false,
+                                  'Windows-Operator',
+                                  'Rejected via Windows Integration Layer'
+                                );
+                                await refreshPendingStages();
+                                addEventLogEntry('Warning', 'Security', 4001, `Operator REJECTED staged hypothesis: ${id}`);
+                              }}
+                              className="px-3 py-1.5 rounded-xl border border-rose-900/30 bg-rose-950/10 hover:bg-rose-900/20 text-rose-400 font-mono text-[10px] uppercase font-bold tracking-wider cursor-pointer transition-all"
+                            >
+                              Reject Hypothesis
+                            </button>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                await loggerInstance.current.humanReviewsStaging(
+                                  id,
+                                  true,
+                                  'Windows-Operator',
+                                  'Approved and applied via Windows Integration Layer'
+                                );
+                                
+                                // Apply approved parameter delta
+                                if (record.parameterDelta) {
+                                  setGraph((prev: any) => {
+                                    const next = JSON.parse(JSON.stringify(prev));
+                                    for (const [stageType, changes] of Object.entries(record.parameterDelta)) {
+                                      let stage = next.stages.find((s: any) => s.type === stageType || s.id === stageType);
+                                      if (!stage && stageType === 'decarboxylation') {
+                                        stage = next.stages.find((s: any) => s.type.toLowerCase().includes('decarb') || s.id.toLowerCase().includes('decarb'));
+                                      }
+                                      if (stage) {
+                                        Object.assign(stage.config, changes);
+                                      }
+                                    }
+                                    return next;
+                                  });
+                                  setTimeout(() => runSimulation(), 100);
+                                }
+
+                                await refreshPendingStages();
+                                addEventLogEntry('Success Audit', 'Security', 2013, `Operator APPROVED and APPLIED staged hypothesis: ${id}`);
+                              }}
+                              className="px-4 py-1.5 rounded-xl border border-emerald-500 bg-emerald-500 text-black hover:bg-[#10b981] font-mono text-[10px] uppercase font-bold tracking-wider cursor-pointer transition-all"
+                            >
+                              Approve & Apply Config
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

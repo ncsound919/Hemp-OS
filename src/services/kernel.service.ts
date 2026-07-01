@@ -1,7 +1,7 @@
-import { KernelExecutor } from '../kernel/workflow/executor';
-import { KernelValidationRunner } from '../kernel/validation/reports';
-import { validateProcessGraph } from '../kernel/workflow/processGraph';
-import { BIOMASS_PROFILES } from '../kernel/calibration/profiles';
+import { KernelExecutor } from '../../kernel/workflow/executor';
+import { KernelValidationRunner } from '../../kernel/validation/reports';
+import { validateProcessGraph } from '../../kernel/workflow/processGraph';
+import { BIOMASS_PROFILES } from '../../kernel/calibration/profiles';
 import { AppError } from '../lib/AppError';
 
 export class KernelService {

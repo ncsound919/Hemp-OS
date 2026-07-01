@@ -28,7 +28,7 @@ export const ExplorerTab: React.FC<ExplorerTabProps> = ({
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div>
           <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono flex items-center gap-1.5">
-            <Database className=\"w-4 h-4 text-emerald-400\" /> Cultivar Library Exploration
+            <Database className="w-4 h-4 text-emerald-400" /> Cultivar Library Exploration
           </h3>
           <p className="text-[8.5px] font-mono text-gray-500 uppercase mt-0.5">Select a strain below to unlock its multi-database profiles</p>
         </div>
@@ -139,11 +139,11 @@ export const ExplorerTab: React.FC<ExplorerTabProps> = ({
           <div className="space-y-2">
             <span className="text-[7.5px] font-mono text-gray-500 uppercase tracking-widest block font-bold">Analytical Terpene Weight Spectrum</span>
             <div className="h-[105px] bg-[#0d0d0f] rounded-xl border border-[#1c1c1f] overflow-hidden p-1 flex items-center justify-center">
-              <ResponsiveContainer width=\"100%\" height=\"100%\">
-                <RadarChart cx=\"50%\" cy=\"50%\" outerRadius=\"70%\" data={getRadarData(selectedStrain)}>
-                  <PolarGrid stroke=\"#1c1c1f\" />
-                  <PolarAngleAxis dataKey=\"subject\" stroke=\"#888\" fontSize={6.5} />
-                  <Radar name=\"Terpenes\" dataKey=\"value\" stroke=\"#10b981\" fill=\"#10b981\" fillOpacity={0.15} />
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={getRadarData(selectedStrain)}>
+                  <PolarGrid stroke="#1c1c1f" />
+                  <PolarAngleAxis dataKey="subject" stroke="#888" fontSize={6.5} />
+                  <Radar name="Terpenes" dataKey="value" stroke="#10b981" fill="#10b981" fillOpacity={0.15} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>

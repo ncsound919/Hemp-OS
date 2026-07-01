@@ -1,7 +1,7 @@
 import http from 'http';
-import { app, attachFrontend } from './app';
-import { env } from './config/env';
-import { logger } from './lib/logger';
+import { app, attachFrontend } from './src/app.ts';
+import { env } from './src/config/env.ts';
+import { logger } from './src/lib/logger.ts';
 
 async function main() {
   await attachFrontend();

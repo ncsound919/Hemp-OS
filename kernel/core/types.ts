@@ -3,13 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export interface CannabinoidProfile {
+export interface CannabinoidOnlyProfile {
   thca: number; // wt% (e.g. 12.5)
   thc: number;  // wt% (e.g. 0.3)
   cbda: number; // wt% (e.g. 8.2)
   cbd: number;  // wt% (e.g. 0.1)
   cbga: number; // wt% (e.g. 1.2)
   cbg: number;  // wt% (e.g. 0.1)
+}
+
+export interface CannabinoidProfile extends CannabinoidOnlyProfile {
   other: number; // wt% (e.g. 2.0)
 }
 
@@ -68,9 +71,10 @@ export interface DecarboxylationRunOutput {
   finalCannabinoidProfile: CannabinoidProfile;
   conversionRateTHCA: number; // %
   conversionRateCBDA: number; // %
+  conversionRateCBGA?: number; // %
   lossToThermalDegradation: number; // wt% of cannabinoids degraded to CBN/other
-  totalCannabinoidsMass: number; // in grams
   co2Evolved: number; // kg of CO2 released as gas
+  finalMass: number; // kg of oil remaining
 }
 
 // Winterization Types
@@ -96,6 +100,7 @@ export interface WinterizationRunOutput {
 export interface DistillationRunInput {
   feedMass: number; // kg of feed oil (usually winterized/decarbed crude)
   feedCannabinoidPurity: number; // wt% of cannabinoids in feed (e.g. 75.0)
+  feedCannabinoidProfile?: Partial<CannabinoidOnlyProfile>;
   feedTerpeneContent: number; // wt% of light volatiles (e.g. 3.0)
   feedHeavyResidue: number; // wt% of non-distillables (e.g. 22.0)
   evaporatorTemp: number; // in C (e.g. 180)
@@ -110,6 +115,8 @@ export interface DistillationRunOutput {
   tailsMass: number; // kg of heavy bottom residue fraction
   cannabinoidPurity: number; // wt% of cannabinoids in distillate
   cannabinoidYield: number; // % of cannabinoids recovered in distillate
+  waxCarryover?: number; // Added to support wax content carrying over
+  finalCannabinoidProfile?: CannabinoidOnlyProfile;
   boilingPoints: {
     terpenes: number; // boiling point in C at set vacuum
     cannabinoids: number; // boiling point in C at set vacuum
@@ -168,6 +175,7 @@ export interface ProcessRunResult {
     massLossKg: number;
     massBalanceCheckPass: boolean;
     uncertainty: number; // combined uncertainty across stages
+    details?: Array<{ stage: string; delta: number; tolerance: number }>;
   };
   energyBalanceReport: EnergyBalance;
   sensitivity: SensitivityAnalysis[];

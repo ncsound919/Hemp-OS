@@ -29,6 +29,8 @@ import { StrainBreedLab } from './components/StrainBreedLab.tsx';
 import { IngestionHub } from './components/IngestionHub.tsx';
 import { ScientificDiscoveryPublisher } from './components/ScientificDiscoveryPublisher.tsx';
 import { WindowsIntegrationLayer } from './components/WindowsIntegrationLayer.tsx';
+import { AgenticProvenanceLogger } from './provenance/AgenticProvenanceLogger.ts';
+import { KernelService } from './services/kernel.service.ts';
 import { 
   Play, Sparkles, ShieldCheck, Activity, ChevronRight, HelpCircle, AlertCircle, Database, Cpu, Layers, Terminal, FolderGit2, Boxes, Dna, FileSearch,
   ArrowDown, Compass, Sliders, TrendingUp, Newspaper, FileText, Info, Laptop
@@ -95,6 +97,8 @@ const DEFAULT_CONNECTIONS = [
 
 export default function App() {
   // 1. Core State
+  const [provenanceLogger] = useState(() => new AgenticProvenanceLogger());
+  const [kernelService] = useState(() => new KernelService());
   const [biomass, setBiomass] = useState<Biomass>({
     id: 'cherry_wine_01',
     name: 'Cherry Wine Hemp',
@@ -828,10 +832,13 @@ export default function App() {
               graph={graph}
               setGraph={setGraph}
               results={results}
+              setResults={setResults}
               runSimulation={runSimulation}
               ingestedDocs={ingestedDocs}
               setIngestedDocs={setIngestedDocs}
               accessToken={accessToken}
+              provenanceLogger={provenanceLogger}
+              kernelService={kernelService}
             />
           </motion.div>
         )}
@@ -922,6 +929,7 @@ export default function App() {
               setActiveStageId={setActiveStageId}
               runSimulation={runSimulation}
               accessToken={accessToken}
+              provenanceLogger={provenanceLogger}
             />
           </motion.div>
         )}

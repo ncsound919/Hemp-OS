@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Award, Download } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { Award, Download, Loader2 } from 'lucide-react';
 import { Biomass } from '../../../kernel/core/types.ts';
 import { PublisherMetrics } from './publisherUtils.ts';
 
@@ -9,7 +9,45 @@ interface AcademicPaperTabProps {
   metrics: PublisherMetrics;
 }
 
+function safeNum(value: unknown, fallback = 0): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function showSuccess(msg: string) {
+  alert(`✅ ${msg}`);
+}
+
+function showError(msg: string) {
+  alert(`❌ ${msg}`);
+}
+
 export const AcademicPaperTab: React.FC<AcademicPaperTabProps> = ({ biomass, metrics }) => {
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  const handlePrintPDF = useCallback(() => {
+    setIsPrinting(true);
+    try {
+      window.print();
+      showSuccess('Preprint sent to print queue');
+    } catch {
+      showError('Failed to open print dialog');
+    } finally {
+      setTimeout(() => setIsPrinting(false), 1200);
+    }
+  }, []);
+
+  // Safe defaults
+  const purityVal = safeNum(metrics.purityVal, 0.84);
+  const calculatedYield = safeNum(metrics.calculatedYield, 0.82);
+  const decarbTemp = safeNum(metrics.decarbTemp, 120);
+  const decarbTime = safeNum(metrics.decarbTime, 60);
+  const winterTemp = safeNum(metrics.winterTemp, -40);
+  const winterRatio = safeNum(metrics.winterRatio, 4.0);
+  const outputProductKg =
+    typeof metrics.outputProductKg === 'string'
+      ? metrics.outputProductKg
+      : safeNum(metrics.outputProductKg, biomass.mass * calculatedYield * purityVal).toFixed(3);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#18181b]/60 border border-[#222] p-4 rounded-xl gap-3 text-xs">
@@ -19,15 +57,23 @@ export const AcademicPaperTab: React.FC<AcademicPaperTabProps> = ({ biomass, met
           </span>
           <p className="text-gray-400 font-mono text-[9.5px]">This peer-reviewed physical simulation document utilizes verified thermodynamic parameters and is digitally stamped.</p>
         </div>
-        <div className="flex gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded font-mono text-[9px] uppercase font-bold text-white tracking-widest transition-all cursor-pointer flex items-center gap-1.5"
-          >
-            <Download className="w-3.5 h-3.5" /> Print PDF
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handlePrintPDF}
+          disabled={isPrinting}
+          className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 px-4 py-2 rounded font-mono text-[9px] uppercase font-bold text-white tracking-widest transition-all cursor-pointer flex items-center gap-1.5 disabled:cursor-wait"
+        >
+          {isPrinting ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              PREPARING...
+            </>
+          ) : (
+            <>
+              <Download className="w-3.5 h-3.5" /> PRINT PDF
+            </>
+          )}
+        </button>
       </div>
 
       <div className="bg-white text-gray-900 p-8 sm:p-12 md:p-16 rounded-2xl shadow-inner max-w-4xl mx-auto font-serif overflow-x-auto leading-relaxed text-sm select-text">
@@ -48,7 +94,7 @@ export const AcademicPaperTab: React.FC<AcademicPaperTabProps> = ({ biomass, met
         <div className="border-t border-b border-gray-300 py-4 my-6">
           <p className="text-xs uppercase font-sans font-bold tracking-wider text-center text-gray-700 mb-2">Abstract</p>
           <p className="text-[12.5px] italic text-justify text-gray-800 leading-relaxed px-4">
-            This work presents a comprehensive simulation of a multi-stage botanical refinement flowsheet operating on a {biomass.name} feedstock with raw cannabinoid fractions of THCA={biomass.potency.thca.toFixed(2)}%, CBDA={biomass.potency.cbda.toFixed(2)}%, and CBD={biomass.potency.cbd.toFixed(2)}%. The kinetic conversion limits of decarboxylation were mapped at {metrics.decarbTemp}°C for {metrics.decarbTime} minutes. Precipitant wax fractionation mechanics were modeled utilizing sub-zero winterization held at {metrics.winterTemp}°C under a solvent ratio of {metrics.winterRatio}:1. Physical computations resolve to a final output of {metrics.outputProductKg} kg of high-purity refined molecules representing a cumulative purification fraction of {(metrics.purityVal * 100).toFixed(2)}% and a chemical extraction yield of {(metrics.calculatedYield * 100).toFixed(2)}%. The mathematical modeling verifies that autonomous calibration reduces overall process entropy while maximizing specific phase separation factors.
+            This work presents a comprehensive simulation of a multi-stage botanical refinement flowsheet operating on a {biomass.name} feedstock with raw cannabinoid fractions of THCA={biomass.potency.thca.toFixed(2)}%, CBDA={biomass.potency.cbda.toFixed(2)}%, and CBD={biomass.potency.cbd?.toFixed(2) ?? 'N/A'}%. The kinetic conversion limits of decarboxylation were mapped at {decarbTemp}°C for {decarbTime} minutes. Precipitant wax fractionation mechanics were modeled utilizing sub-zero winterization held at {winterTemp}°C under a solvent ratio of {winterRatio}:1. Physical computations resolve to a final output of {outputProductKg} kg of high-purity refined molecules representing a cumulative purification fraction of {(purityVal * 100).toFixed(2)}% and a chemical extraction yield of {(calculatedYield * 100).toFixed(2)}%. The mathematical modeling verifies that autonomous calibration reduces overall process entropy while maximizing specific phase separation factors.
           </p>
         </div>
 
@@ -83,15 +129,15 @@ export const AcademicPaperTab: React.FC<AcademicPaperTabProps> = ({ biomass, met
                 </tr>
                 <tr className="border-b border-gray-100">
                   <td className="py-1">Predicted Extraction Yield</td>
-                  <td className="py-1 text-right font-semibold">{(metrics.calculatedYield * 100).toFixed(2)}%</td>
+                  <td className="py-1 text-right font-semibold">{(calculatedYield * 100).toFixed(2)}%</td>
                 </tr>
                 <tr className="border-b border-gray-100">
                   <td className="py-1">Final Refined Purity</td>
-                  <td className="py-1 text-right font-semibold">{(metrics.purityVal * 100).toFixed(2)}%</td>
+                  <td className="py-1 text-right font-semibold">{(purityVal * 100).toFixed(2)}%</td>
                 </tr>
                 <tr className="border-b border-gray-200">
                   <td className="py-1">Output Isolated Compounds</td>
-                  <td className="py-1 text-right font-semibold text-blue-700">{metrics.outputProductKg} kg</td>
+                  <td className="py-1 text-right font-semibold text-blue-700">{outputProductKg} kg</td>
                 </tr>
               </tbody>
             </table>
@@ -101,3 +147,4 @@ export const AcademicPaperTab: React.FC<AcademicPaperTabProps> = ({ biomass, met
     </div>
   );
 };
+

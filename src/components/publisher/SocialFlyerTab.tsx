@@ -1,6 +1,11 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * Ultimate single‑file Social Flyer Tool
+ * - All types, utilities, and UI in one file
+ * - Depends on React and lucide-react (install via npm)
+ * - Drop into any React project
  */
 
 import React, { useMemo, useState } from 'react';
@@ -21,29 +26,54 @@ import {
   FileText,
   Instagram,
   Linkedin,
-  MessageSquareQuote
+  MessageSquareQuote,
 } from 'lucide-react';
-import { Biomass } from '../../../kernel/core/types.ts';
-import { PublisherMetrics } from './publisherUtils.ts';
 
-interface SocialFlyerTabProps {
-  biomass: Biomass;
-  metrics: PublisherMetrics;
+// ============================================================================
+// Types (originally imported from ../../../kernel/core/types.ts and ./publisherUtils.ts)
+// ============================================================================
+
+/** Biomass feedstock descriptor */
+export interface Biomass {
+  name: string;
+  mass: number; // kg
+  potency: {
+    thca: number; // weight %
+    cbda: number; // weight %
+    cbd?: number; // weight % (optional)
+  };
 }
+
+/** Metrics produced by the publisher pipeline */
+export interface PublisherMetrics {
+  purityVal?: number;
+  decarbTemp?: number;
+  winterTemp?: number;
+  calculatedYield?: number;
+  outputProductKg?: string | number;
+  totalCBD?: number;
+  decarbTime?: number;
+  winterRatio?: number;
+  // additional fields can be added
+}
+
+/** Extended metrics with safe defaults */
+type ExtendedMetrics = PublisherMetrics & {
+  calculatedYield: number;
+  outputProductKg: string | number;
+  decarbTime: number;
+  winterRatio: number;
+  totalCBD: number;
+};
+
+// ============================================================================
+// UI Constants and Helpers
+// ============================================================================
 
 type FlyerStyle = 'neon-grid' | 'academic-brutalist' | 'lab-report' | 'thermal-warning';
 type FlyerAspect = 'square' | 'story' | 'landscape';
 type FlyerVoice = 'hype' | 'scientific' | 'investor' | 'retail';
 type Channel = 'x' | 'instagram' | 'linkedin';
-
-type ExtendedMetrics = PublisherMetrics & {
-  calculatedYield?: number;
-  outputProductKg?: string | number;
-  decarbTime?: number;
-  winterRatio?: number;
-  totalCBD?: number;
-  claimMultiplier?: number;
-};
 
 const STYLE_TOKENS: Record<
   FlyerStyle,
@@ -68,7 +98,7 @@ const STYLE_TOKENS: Record<
     kicker: 'text-emerald-400',
     shell: 'shadow-purple-500/10',
     grid:
-      'bg-[linear-gradient(to_right,#2b1f55_1px,transparent_1px),linear-gradient(to_bottom,#2b1f55_1px,transparent_1px)] bg-[size:28px_28px] opacity-25'
+      'bg-[linear-gradient(to_right,#2b1f55_1px,transparent_1px),linear-gradient(to_bottom,#2b1f55_1px,transparent_1px)] bg-[size:28px_28px] opacity-25',
   },
   'academic-brutalist': {
     panel: 'from-[#151518] via-[#111214] to-[#0c0d0f]',
@@ -77,7 +107,7 @@ const STYLE_TOKENS: Record<
     softAccent: 'text-cyan-300',
     chip: 'bg-white/0 border-[#2a2c31] text-gray-200',
     kicker: 'text-blue-400',
-    shell: 'shadow-black/40'
+    shell: 'shadow-black/40',
   },
   'lab-report': {
     panel: 'from-[#07211b] via-[#0b1715] to-[#101315]',
@@ -86,7 +116,7 @@ const STYLE_TOKENS: Record<
     softAccent: 'text-cyan-200',
     chip: 'bg-black/20 border-[#23302c] text-gray-100',
     kicker: 'text-emerald-400',
-    shell: 'shadow-emerald-500/10'
+    shell: 'shadow-emerald-500/10',
   },
   'thermal-warning': {
     panel: 'from-[#251004] via-[#1a0b08] to-[#12090a]',
@@ -95,34 +125,34 @@ const STYLE_TOKENS: Record<
     softAccent: 'text-rose-200',
     chip: 'bg-black/25 border-[#3a231b] text-gray-100',
     kicker: 'text-amber-400',
-    shell: 'shadow-amber-500/10'
-  }
+    shell: 'shadow-amber-500/10',
+  },
 };
 
 const ASPECT_TOKENS: Record<FlyerAspect, string> = {
   square: 'aspect-square max-w-[34rem]',
   story: 'aspect-[9/16] max-w-[24rem]',
-  landscape: 'aspect-[16/10] max-w-[42rem]'
+  landscape: 'aspect-[16/10] max-w-[42rem]',
 };
 
 const DEFAULT_HEADLINES: Record<FlyerVoice, string> = {
   hype: 'SHATTERING PURITY RECORDS',
   scientific: 'KERNEL-VERIFIED REFINEMENT PROFILE',
   investor: 'HIGHER PURITY, LOWER PROCESS DRIFT',
-  retail: 'CLEANER EXTRACTION. BETTER PRODUCT.'
+  retail: 'CLEANER EXTRACTION. BETTER PRODUCT.',
 };
 
 const CHANNEL_LIMITS: Record<Channel, number> = {
   x: 280,
   instagram: 2200,
-  linkedin: 3000
+  linkedin: 3000,
 };
 
-function pct(value?: number, digits = 1) {
+function pct(value?: number, digits = 1): string {
   return `${((value ?? 0) * 100).toFixed(digits)}%`;
 }
 
-function safeNum(value: unknown, fallback = 0) {
+function safeNum(value: unknown, fallback = 0): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
@@ -136,14 +166,25 @@ function downloadText(filename: string, content: string, mime = 'text/plain;char
   URL.revokeObjectURL(url);
 }
 
-function trimTo(text: string, max: number) {
+function trimTo(text: string, max: number): string {
   if (text.length <= max) return text;
   return `${text.slice(0, max - 1).trimEnd()}…`;
 }
 
+// ============================================================================
+// Main Component
+// ============================================================================
+
+interface SocialFlyerTabProps {
+  biomass: Biomass;
+  metrics: PublisherMetrics;
+}
+
 export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics }) => {
+  // Safely extend metrics
   const m = metrics as ExtendedMetrics;
 
+  // State
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
   const [flyerStyle, setFlyerStyle] = useState<FlyerStyle>('neon-grid');
@@ -159,6 +200,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
   const [includeClaimDiscipline, setIncludeClaimDiscipline] = useState(true);
   const [showDataStrip, setShowDataStrip] = useState(true);
 
+  // Derived metrics
   const purityVal = safeNum(m.purityVal, 0.84);
   const calculatedYield = safeNum(m.calculatedYield, 0.82);
   const decarbTemp = safeNum(m.decarbTemp, 120);
@@ -172,7 +214,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
 
   const totalCBD = safeNum(
     m.totalCBD,
-    biomass.potency.cbd + biomass.potency.cbda * 0.877
+    biomass.potency.cbd ?? 0 + biomass.potency.cbda * 0.877
   );
 
   const style = STYLE_TOKENS[flyerStyle];
@@ -196,7 +238,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
       '#ProcessIntelligence',
       '#KernelVerified',
       '#ExtractionScience',
-      '#CannabinoidEngineering'
+      '#CannabinoidEngineering',
     ];
     if (voice === 'investor') tags.push('#ManufacturingIntelligence');
     if (voice === 'scientific') tags.push('#ComputationalChemistry');
@@ -217,14 +259,14 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
       )} purity and ${pct(calculatedYield)} yield, indicating a ${toneWord} path toward tighter downstream refinement and more efficient process control.`,
       retail: `${headline} ${biomass.name} modeled clean with ${pct(
         purityVal
-      )} purity and a controlled thermal/freeze pathway designed to support better extract quality and more consistent output.`
+      )} purity and a controlled thermal/freeze pathway designed to support better extract quality and more consistent output.`,
     }[voice];
 
     const extras = [
       `Output projection: ${outputProductKg} kg refined fraction.`,
       `CBD-equivalent profile: ${totalCBD.toFixed(2)} wt%.`,
       `${qualitySignal}.`,
-      cta
+      cta,
     ];
 
     const discipline = includeClaimDiscipline
@@ -248,7 +290,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
     qualitySignal,
     cta,
     subhead,
-    includeClaimDiscipline
+    includeClaimDiscipline,
   ]);
 
   const socialCopy = useMemo(() => {
@@ -280,7 +322,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
             : ''
         }\n\n${includeHashtags ? hashtags : ''}`,
         CHANNEL_LIMITS.linkedin
-      )
+      ),
     };
     return variants[channel];
   }, [
@@ -298,7 +340,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
     includeHashtags,
     includeClaimDiscipline,
     hashtags,
-    channel
+    channel,
   ]);
 
   const handleCopy = async (text: string) => {
@@ -333,13 +375,13 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
         winterTemp,
         winterRatio,
         outputProductKg,
-        totalCBD
+        totalCBD,
       },
       headline,
       subhead,
       cta,
       generatedBody,
-      socialCopy
+      socialCopy,
     }),
     [
       campaignTag,
@@ -360,7 +402,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
       subhead,
       cta,
       generatedBody,
-      socialCopy
+      socialCopy,
     ]
   );
 
@@ -506,7 +548,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
             {([
               { id: 'x', icon: MessageSquareQuote, label: 'X' },
               { id: 'instagram', icon: Instagram, label: 'Instagram' },
-              { id: 'linkedin', icon: Linkedin, label: 'LinkedIn' }
+              { id: 'linkedin', icon: Linkedin, label: 'LinkedIn' },
             ] as { id: Channel; icon: React.ComponentType<any>; label: string }[]).map((item) => {
               const Icon = item.icon;
               return (
@@ -595,10 +637,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
             <button
               type="button"
               onClick={() =>
-                downloadText(
-                  `hemp-os-flyer-${channel}.txt`,
-                  socialCopy
-                )
+                downloadText(`hemp-os-flyer-${channel}.txt`, socialCopy)
               }
               className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-mono font-bold uppercase tracking-widest rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2"
             >
@@ -621,9 +660,7 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
               Export JSON
             </button>
           </div>
-          {copyError && (
-            <p className="text-[10px] text-rose-400 font-mono">{copyError}</p>
-          )}
+          {copyError && <p className="text-[10px] text-rose-400 font-mono">{copyError}</p>}
         </div>
       </div>
 
@@ -632,7 +669,9 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
           className={`w-full ${ASPECT_TOKENS[flyerAspect]} p-6 sm:p-8 flex flex-col justify-between rounded-[2rem] overflow-hidden shadow-2xl relative select-none border bg-gradient-to-br ${style.panel} ${style.border} ${style.shell}`}
         >
           {style.grid && (
-            <div className={`absolute inset-0 ${style.grid} [mask-image:radial-gradient(ellipse_75%_60%_at_50%_20%,#000_60%,transparent_100%)]`} />
+            <div
+              className={`absolute inset-0 ${style.grid} [mask-image:radial-gradient(ellipse_75%_60%_at_50%_20%,#000_60%,transparent_100%)]`}
+            />
           )}
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.10),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.10),transparent_25%)] pointer-events-none" />
@@ -672,7 +711,9 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
           </div>
 
           {showDataStrip && (
-            <div className={`relative z-10 grid grid-cols-2 md:grid-cols-4 gap-3 bg-black/25 border p-3.5 rounded-2xl ${style.chip}`}>
+            <div
+              className={`relative z-10 grid grid-cols-2 md:grid-cols-4 gap-3 bg-black/25 border p-3.5 rounded-2xl ${style.chip}`}
+            >
               <div className="space-y-1">
                 <div className="flex items-center gap-1">
                   <Flame className="w-3 h-3 text-amber-400" />
@@ -813,3 +854,5 @@ export const SocialFlyerTab: React.FC<SocialFlyerTabProps> = ({ biomass, metrics
     </div>
   );
 };
+
+export default SocialFlyerTab;

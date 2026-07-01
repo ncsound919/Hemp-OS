@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Send, Sparkles, AlertCircle, RefreshCw, Cpu, 
+  Send, Sparkles, AlertCircle, RefreshCw, Cpu, HelpCircle
 } from 'lucide-react';
 import { ProcessGraph, ProcessRunResult } from '../../kernel/core/types.ts';
 

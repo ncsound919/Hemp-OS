@@ -1,3 +1,5 @@
+import { TraitStat, EnvironmentRecord, Genotype } from './engine/types';
+
 export interface Strain {
   id: string;
   name: string;
@@ -18,6 +20,14 @@ export interface Strain {
   origin: string;
   landraceBackground: string;
   isCustom?: boolean;
+
+  // --- QUANTITATIVE GENETICS ENGINE EXTRA FIELDS ---
+  phenotype?: Record<string, TraitStat>;
+  parents?: [string, string] | [];
+  isMeasured?: boolean;
+  genotype?: Genotype;
+  environmentHistory?: EnvironmentRecord[];
+
 
   // --- LEAFLY CONSUMER INTEL ---
   leaflyInfo: {

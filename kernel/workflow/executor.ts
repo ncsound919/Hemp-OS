@@ -1,214 +1,193 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { ProcessGraph, ProcessStage, ProcessRunResult, Biomass, Solvent, CannabinoidProfile } from '../core/types.ts';
+import { ProcessGraph, ProcessStage, ProcessRunResult, Biomass, CannabinoidProfile, ExtractionRunOutput, DecarboxylationRunOutput, WinterizationRunOutput, DistillationRunOutput } from '../core/types.ts';
 import { ExtractionModel } from '../models/extractionModel.ts';
 import { DecarboxylationModel } from '../models/decarboxylationModel.ts';
 import { WinterizationModel } from '../models/winterizationModel.ts';
 import { DistillationModel } from '../models/distillationModel.ts';
 import { topologicalSort } from './processGraph.ts';
 
+// ---- Configuration ----
+interface KernelConfig {
+  terpeneFractionOfOther: number;
+  energyPerStageKWh: number;
+  thermalFraction: number;
+}
+
+const DEFAULT_CONFIG: KernelConfig = {
+  terpeneFractionOfOther: 0.25,
+  energyPerStageKWh: 3.8,
+  thermalFraction: 0.71,
+};
+
+// ---- State ----
+interface ProcessState {
+  oilMass: number;          // kg
+  profile: CannabinoidProfile;   // cannabinoids only (wt%)
+  waxContent: number;       // wt%
+  otherContent: number;     // wt% (terpenes, lipids, etc.)
+}
+
+// ---- Main Executor ----
 export class KernelExecutor {
-  /**
-   * Executes a multi-stage process graph deterministically.
-   * State (mass, purity, cannabinoid profile) is physically propagated from stage to stage.
-   */
+  private static config: KernelConfig = DEFAULT_CONFIG;
+
+  static setConfig(cfg: Partial<KernelConfig>) {
+    this.config = { ...DEFAULT_CONFIG, ...cfg };
+  }
+
   static runProcess(graph: ProcessGraph, initialBiomass: Biomass): ProcessRunResult {
     const sortedStages = topologicalSort(graph);
+    if (sortedStages.length === 0) {
+      throw new Error('Process graph must contain at least one stage.');
+    }
+
+    this.validateStageSequence(sortedStages);
+
+    // Initial state: no oil yet, profile from biomass (but only cannabinoids)
+    let state: ProcessState = {
+      oilMass: 0,
+      profile: { thca: 0, thc: 0, cbda: 0, cbd: 0, cbga: 0, cbg: 0, other: 0 },
+      waxContent: initialBiomass.waxContent ?? 0,
+      otherContent: 0,
+    };
+
     const stagesResults: Record<string, any> = {};
-
-    // Physical stream state carried between stages
-    let currentOilMass = 0; // kg of solute/oil
-    let currentProfile: CannabinoidProfile = { ...initialBiomass.potency };
-    let currentWaxContent = initialBiomass.waxContent; // wt% in oil
-    let currentOtherContent = 0; // wt% of non-cannabinoid, non-wax in oil
-
-    // Initialize mass balance tracking
     const initialMassKg = initialBiomass.mass;
 
+    console.debug(`[KernelExecutor v2.6.1] Starting deterministic simulation on ${initialMassKg.toFixed(3)} kg ${initialBiomass.name}`);
+
     for (const stage of sortedStages) {
-      if (stage.type === 'extraction') {
-        // --- 1. Extraction Stage ---
+      try {
         const config = stage.config;
-        
-        // Build input from biomass and stage config
-        const solvent: Solvent = {
-          type: config.solventType || 'Ethanol',
-          purity: config.solventPurity !== undefined ? config.solventPurity : 99.5,
-          temperature: config.solventTemp !== undefined ? config.solventTemp : -40,
-        };
+        let output: ExtractionRunOutput | DecarboxylationRunOutput | WinterizationRunOutput | DistillationRunOutput | undefined = undefined;
+        let massIn = state.oilMass; // for mass balance tracking
+        let massOut: number;
 
-        const input = {
-          biomass: initialBiomass,
-          solvent,
-          solventRatio: config.solventRatio || 8.0,
-          temperature: config.extractionTemp !== undefined ? config.extractionTemp : -40,
-          duration: config.duration || 30,
-          agitationSpeed: config.agitationSpeed || 300,
-        };
+        // ---- Dispatch to models ----
+        if (stage.type === 'extraction') {
+          const extOutput = ExtractionModel.run({
+            biomass: initialBiomass,
+            solvent: {
+              type: config.solventType || 'Ethanol',
+              purity: config.solventPurity ?? 99.5,
+              temperature: config.solventTemp ?? -40,
+            },
+            solventRatio: config.solventRatio ?? 8.0,
+            temperature: config.extractionTemp ?? -40,
+            duration: config.duration ?? 30,
+            agitationSpeed: config.agitationSpeed ?? 300,
+          });
+          output = extOutput;
+          
+          const dryExtractSolidsMassKg = (Object.values(extOutput.cannabinoidRecovery).reduce((a, b) => a + b, 0) / 1000) + extOutput.waxExtracted;
+          state.oilMass = dryExtractSolidsMassKg;
+          
+          const totalCannGrams = Object.values(extOutput.cannabinoidRecovery).reduce((a, b) => a + b, 0);
+          state.profile = {
+            thca: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.thca || 0) / totalCannGrams * 100 : 0,
+            thc: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.thc || 0) / totalCannGrams * 100 : 0,
+            cbda: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.cbda || 0) / totalCannGrams * 100 : 0,
+            cbd: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.cbd || 0) / totalCannGrams * 100 : 0,
+            cbga: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.cbga || 0) / totalCannGrams * 100 : 0,
+            cbg: totalCannGrams > 0 ? (extOutput.cannabinoidRecovery.cbg || 0) / totalCannGrams * 100 : 0,
+            other: 0,
+          };
+          
+          state.waxContent = dryExtractSolidsMassKg > 0 ? (extOutput.waxExtracted / dryExtractSolidsMassKg) * 100 : 0;
+          massIn = initialBiomass.mass; // input is biomass mass, not oil
+          massOut = extOutput.miscellaMass + extOutput.spentBiomassMass;
 
-        const output = ExtractionModel.run(input);
-        stagesResults[stage.id] = { input, output };
+        } else if (stage.type === 'winterization') {
+          if (state.oilMass <= 0) {
+            throw new Error('Winterization requires crude oil from prior extraction.');
+          }
+          const winOutput = WinterizationModel.run({
+            crudeOilMass: state.oilMass,
+            cannabinoidPurity: Object.values(state.profile).reduce((a, b) => a + b, 0),
+            waxContent: state.waxContent,
+            solventRatio: config.solventRatio ?? 5.0,
+            coolingTemp: config.coolingTemp ?? -40,
+            coolingTime: config.coolingTime ?? 24,
+            filtrationPasses: config.filtrationPasses ?? 1,
+          });
+          output = winOutput;
+          massIn = state.oilMass;
+          massOut = winOutput.dewaxedCrudeMass + winOutput.precipitatedWaxMass;
+          state.oilMass = winOutput.dewaxedCrudeMass;
+          // Winterization doesn't change relative ratios of cannabinoids, just removes wax
+          state.waxContent = winOutput.finalWaxContent;
 
-        // Post-Extraction Solvent Recovery (Evaporation) to obtain crude oil
-        // Calculates dry crude oil mass and cannabinoid distribution
-        const recoveredGrams = Object.values(output.cannabinoidRecovery).reduce((a, b) => a + b, 0);
-        const recoveredCannabinoidsKg = recoveredGrams / 1000;
-        const recoveredWaxKg = output.waxExtracted;
-        
-        // Plants co-extract some small background material (e.g. terpenes, chlorophyll)
-        const moistureExtractedKg = (initialBiomass.mass * (initialBiomass.moisture / 100)) * 0.15; // 15% of moisture co-extracted
-        const backgroundLipidsKg = initialBiomass.mass * 0.015; // 1.5% of biomass mass is background fats
-        const otherExtractedKg = moistureExtractedKg + backgroundLipidsKg;
+        } else if (stage.type === 'decarboxylation') {
+          if (state.oilMass <= 0) {
+            throw new Error('Decarboxylation requires oil from prior stage.');
+          }
+          output = DecarboxylationModel.run({
+            initialCannabinoidProfile: state.profile,
+            totalMass: state.oilMass,
+            temperature: config.temperature ?? 120,
+            duration: config.duration ?? 60,
+          });
+          massIn = state.oilMass;
+          massOut = output.finalMass + (output.co2Evolved ?? 0);
+          state.oilMass = output.finalMass;
+          state.profile = output.finalCannabinoidProfile;
 
-        currentOilMass = recoveredCannabinoidsKg + recoveredWaxKg + otherExtractedKg;
+        } else if (stage.type === 'distillation') {
+          if (state.oilMass <= 0) {
+            throw new Error('Distillation requires oil from prior stage.');
+          }
 
-        // Calculate wt% profile in the solvent-free crude oil
-        currentProfile = {
-          thca: currentOilMass > 0 ? ((output.cannabinoidRecovery.thca / 1000) / currentOilMass) * 100 : 0,
-          thc: currentOilMass > 0 ? ((output.cannabinoidRecovery.thc / 1000) / currentOilMass) * 100 : 0,
-          cbda: currentOilMass > 0 ? ((output.cannabinoidRecovery.cbda / 1000) / currentOilMass) * 100 : 0,
-          cbd: currentOilMass > 0 ? ((output.cannabinoidRecovery.cbd / 1000) / currentOilMass) * 100 : 0,
-          cbga: currentOilMass > 0 ? ((output.cannabinoidRecovery.cbga / 1000) / currentOilMass) * 100 : 0,
-          cbg: currentOilMass > 0 ? ((output.cannabinoidRecovery.cbg / 1000) / currentOilMass) * 100 : 0,
-          other: currentOilMass > 0 ? ((output.cannabinoidRecovery.other / 1000) / currentOilMass) * 100 : 0,
-        };
+          const totalCann = Object.values(state.profile).reduce((a, b) => a + b, 0);
+          const terpenes = state.otherContent * this.config.terpeneFractionOfOther;
+          const heavyResidue = 100 - totalCann - terpenes;
 
-        currentWaxContent = currentOilMass > 0 ? (recoveredWaxKg / currentOilMass) * 100 : 0;
-        currentOtherContent = currentOilMass > 0 ? (otherExtractedKg / currentOilMass) * 100 : 0;
+          const distOutput = DistillationModel.run({
+            feedMass: state.oilMass,
+            feedCannabinoidPurity: totalCann,
+            feedTerpeneContent: terpenes,
+            feedHeavyResidue: heavyResidue,
+            feedCannabinoidProfile: state.profile,
+            evaporatorTemp: config.evaporatorTemp ?? 185,
+            condenserTemp: config.condenserTemp ?? 70,
+            vacuumPressure: config.vacuumPressure ?? 0.05,
+            feedRate: config.feedRate ?? 1.5,
+          });
+          output = distOutput;
 
-      } else if (stage.type === 'winterization') {
-        // --- 2. Winterization Stage ---
-        // Requires existing crude oil (must have run extraction first)
-        if (currentOilMass <= 0) {
-          throw new Error('Scientific Validation Error: Winterization cannot be executed because no pre-existing crude oil feed stream is present. You must position an Extraction stage before Winterization in the flowsheet pipeline.');
+          massIn = state.oilMass;
+          massOut = distOutput.distillateMass + distOutput.tailsMass + distOutput.headsMass;
+          state.oilMass = distOutput.distillateMass;
+          
+          if (distOutput.finalCannabinoidProfile) {
+            state.profile = {
+              ...distOutput.finalCannabinoidProfile,
+              other: 0,
+            };
+          }
+          
+          state.waxContent = distOutput.waxCarryover ?? 0.4;
         }
 
-        const config = stage.config;
-        const totalCannabinoidsPct = Object.values(currentProfile).reduce((a, b) => a + b, 0);
+        // ---- Normalise state (ensure composition sums to 100%) ----
+        state = this.normalizeState(state);
 
-        const input = {
-          crudeOilMass: currentOilMass,
-          cannabinoidPurity: totalCannabinoidsPct,
-          waxContent: currentWaxContent,
-          solventRatio: config.solventRatio || 5.0,
-          coolingTemp: config.coolingTemp !== undefined ? config.coolingTemp : -40,
-          coolingTime: config.coolingTime || 24,
-          filtrationPasses: config.filtrationPasses || 1,
+        // ---- Store results with mass balance data ----
+        stagesResults[stage.id] = {
+          stageType: stage.type,
+          config,
+          output,
+          massIn,
+          massOut,
         };
 
-        const output = WinterizationModel.run(input);
-        stagesResults[stage.id] = { input, output };
-
-        // Propagate the state forward
-        currentOilMass = output.dewaxedCrudeMass;
-        currentWaxContent = output.finalWaxContent;
-        
-        // Reduce cannabinoid profiles by the filtration loss rate
-        const lossFactor = output.cannabinoidRecoveryRate / 100;
-        for (const key of Object.keys(currentProfile)) {
-          currentProfile[key as keyof CannabinoidProfile] *= lossFactor;
-        }
-
-        // Recalculate 'other' to satisfy total mass balance
-        const totalCannabinoidsPctAfter = Object.values(currentProfile).reduce((a, b) => a + b, 0);
-        currentOtherContent = 100 - totalCannabinoidsPctAfter - currentWaxContent;
-
-      } else if (stage.type === 'decarboxylation') {
-        // --- 3. Decarboxylation Stage ---
-        if (currentOilMass <= 0) {
-          throw new Error('Scientific Validation Error: Decarboxylation cannot be executed because no pre-existing crude oil feed stream is present. You must position an Extraction stage before Decarboxylation in the flowsheet pipeline.');
-        }
-
-        const config = stage.config;
-        const input = {
-          initialCannabinoidProfile: currentProfile,
-          totalMass: currentOilMass,
-          temperature: config.temperature !== undefined ? config.temperature : 120,
-          duration: config.duration || 60,
-        };
-
-        const output = DecarboxylationModel.run(input);
-        stagesResults[stage.id] = { input, output };
-
-        // Propagate state
-        currentOilMass = Math.max(0.001, currentOilMass - output.co2Evolved);
-        currentProfile = output.finalCannabinoidProfile;
-
-        // Wax is unaffected by decarb, but its wt% changes slightly due to CO2 evaporation loss
-        const totalCannabinoidsPct = Object.values(currentProfile).reduce((a, b) => a + b, 0);
-        currentOtherContent = 100 - totalCannabinoidsPct - currentWaxContent;
-
-      } else if (stage.type === 'distillation') {
-        // --- 4. Distillation Stage ---
-        if (currentOilMass <= 0) {
-          throw new Error('Scientific Validation Error: Distillation cannot be executed because no pre-existing oil feed stream is present. You must position an Extraction, Winterization, or Decarboxylation stage before Distillation in the flowsheet pipeline.');
-        }
-
-        const config = stage.config;
-        const totalCannabinoidsPct = Object.values(currentProfile).reduce((a, b) => a + b, 0);
-        
-        // Define terpene volatiles in the feed stream vs heavy residual lipids
-        // Terpenes/volatiles are volatile, waxes and background materials are heavy residues
-        const terpeneContent = Math.min(5.0, currentOtherContent * 0.15); // e.g. 15% of other is volatiles
-        const heavyResidue = 100 - totalCannabinoidsPct - terpeneContent;
-
-        const input = {
-          feedMass: currentOilMass,
-          feedCannabinoidPurity: totalCannabinoidsPct,
-          feedTerpeneContent: terpeneContent,
-          feedHeavyResidue: heavyResidue,
-          evaporatorTemp: config.evaporatorTemp !== undefined ? config.evaporatorTemp : 185,
-          condenserTemp: config.condenserTemp !== undefined ? config.condenserTemp : 70,
-          vacuumPressure: config.vacuumPressure !== undefined ? config.vacuumPressure : 0.05,
-          feedRate: config.feedRate || 1.5,
-        };
-
-        const output = DistillationModel.run(input);
-        stagesResults[stage.id] = { input, output };
-
-        // Distillate becomes the final output stream state
-        currentOilMass = output.distillateMass;
-        currentWaxContent = (vaporizedWaxes(output, currentOilMass * (currentWaxContent / 100)) / output.distillateMass) * 100; // very low wax contamination
-        
-        // Distillate composition profile (mostly active cannabinoids)
-        const yieldFactor = output.cannabinoidYield / 100;
-        const scaleFactor = output.distillateMass > 0 ? (input.feedMass * (totalCannabinoidsPct / 100) * yieldFactor) / output.distillateMass : 0;
-        
-        for (const key of Object.keys(currentProfile)) {
-          currentProfile[key as keyof CannabinoidProfile] *= scaleFactor;
-        }
+      } catch (err: any) {
+        console.error(`[KernelExecutor] Failed at stage ${stage.type}:`, err.message);
+        throw new Error(`Stage ${stage.type} failed: ${err.message}`);
       }
     }
 
-    // Calculate final mass balance metrics
-    const finalMassKg = currentOilMass;
+    // ---- Final mass balance ----
+    const finalMassKg = state.oilMass;
     const massLossKg = Math.max(0, initialMassKg - finalMassKg);
-    
-    // Dynamic mass balance validation: check that mass conservation rules hold for each run stage
-    let massBalanceCheckPass = true;
-    for (const stageId of Object.keys(stagesResults)) {
-      const res = stagesResults[stageId];
-      if (res.output && res.input) {
-        if (res.output.miscellaMass !== undefined && res.output.spentBiomassMass !== undefined) {
-          // Extraction mass conservation check
-          const inMass = res.input.biomass.mass + (res.input.solventRatio * 0.789 * (1 - 0.001 * (res.input.solvent.temperature - 20)));
-          const outMass = res.output.miscellaMass + res.output.spentBiomassMass;
-          if (Math.abs(inMass - outMass) > 1.0) massBalanceCheckPass = false;
-        } else if (res.output.co2Evolved !== undefined) {
-          // Decarb mass conservation check: initialMass equals finalMass + co2Evolved within a strict tolerance
-          const inMass = res.input.totalMass;
-          const outMass = (res.input.totalMass - res.output.co2Evolved) + res.output.co2Evolved;
-          if (Math.abs(inMass - outMass) > 0.001) massBalanceCheckPass = false;
-        }
-      }
-    }
-
-    // Root Sum Square (RSS) uncertainty propagation: sqrt(sum(uncertainties^2))
-    // Initial measurement uncertainty 1.5%, plus 0.5% per processing stage
-    const combinedUncertainty = Math.sqrt(Math.pow(1.5, 2) + sortedStages.reduce((acc, _) => acc + Math.pow(0.5, 2), 0));
 
     return {
       manifest: {
@@ -216,34 +195,102 @@ export class KernelExecutor {
         timestamp: new Date().toISOString(),
         graphSnapshot: graph,
         biomassSnapshot: initialBiomass,
-        kernelVersion: 'v2.1.0-Deterministic',
-        environment: 'local'
+        kernelVersion: 'v2.6.1-FullProfile',
+        environment: 'local',
       },
       stagesResults,
       massBalanceReport: {
         initialMassKg,
         finalMassKg,
         massLossKg,
-        massBalanceCheckPass,
-        uncertainty: combinedUncertainty
+        massBalanceCheckPass: this.validateMassBalance(stagesResults),
+        uncertainty: Math.sqrt(2.25 + sortedStages.length * 0.36),
       },
-      energyBalanceReport: {
-        energyConsumedKWh: sortedStages.length * 4.2 + (initialMassKg * 0.5),
-        thermalEnergyKWh: sortedStages.length * 3.1,
-        mechanicalEnergyKWh: sortedStages.length * 1.1,
-      },
-      sensitivity: [
-        { param: 'Extraction Temperature', impactMagnitude: 8.5 },
-        { param: 'Solvent Ratio', impactMagnitude: 4.2 },
-        { param: 'Decarb Duration', impactMagnitude: 12.1 }
-      ]
+      energyBalanceReport: this.computeEnergyBalance(sortedStages, initialMassKg),
+      sensitivity: sortedStages.map((s) => ({
+        param: s.type,
+        impactMagnitude: this.getStageImpact(s.type),
+      })),
     };
   }
-}
 
-// Utility to approximate wax carry-over into distillate
-function vaporizedWaxes(distOut: any, feedWaxMass: number): number {
-  // Wax carryover is now modeled as a function of feed wax mass and distillation efficiency
-  // Wiped film distillers reduce wax content by factors of 100-1000
-  return feedWaxMass * 0.001 * (1 - Math.min(0.9, distOut.cannabinoidYield / 100));
+  // ---- Helpers ----
+
+  /**
+   * Normalises the state so that cannabinoids + wax ≤ 100%.
+   * If they exceed 100%, both are scaled down proportionally,
+   * and `otherContent` is recalculated as the remainder.
+   */
+  private static normalizeState(state: ProcessState): ProcessState {
+    const totalCann = Object.values(state.profile).reduce((a, b) => a + b, 0);
+    let total = totalCann + state.waxContent;
+
+    if (total > 100) {
+      const scale = 100 / total;
+      for (const key of Object.keys(state.profile) as Array<keyof CannabinoidProfile>) {
+        state.profile[key]! *= scale;
+      }
+      state.waxContent *= scale;
+      // Recompute total after scaling
+      const newTotalCann = Object.values(state.profile).reduce((a, b) => a + b, 0);
+      state.otherContent = Math.max(0, 100 - newTotalCann - state.waxContent);
+    } else {
+      state.otherContent = Math.max(0, 100 - totalCann - state.waxContent);
+    }
+
+    return state;
+  }
+
+  /**
+   * Validates stage order: warns if a stage appears out of logical sequence.
+   * Does not throw to allow flexibility, but logs a warning.
+   */
+  private static validateStageSequence(stages: ProcessStage[]) {
+    const order = ['extraction', 'winterization', 'decarboxylation', 'distillation'];
+    let lastIndex = -1;
+    for (const stage of stages) {
+      const idx = order.indexOf(stage.type);
+      if (idx !== -1 && idx < lastIndex) {
+        console.warn(`[Kernel] Stage order violation: ${stage.type} appears before expected predecessor.`);
+      }
+      if (idx !== -1) lastIndex = idx;
+    }
+  }
+
+  /**
+   * Checks mass balance for each stored stage result.
+   * Returns true only if all stages are within 1.5% tolerance.
+   */
+  private static validateMassBalance(stagesResults: Record<string, any>): boolean {
+    for (const result of Object.values(stagesResults)) {
+      if (result.massIn !== undefined && result.massOut !== undefined) {
+        const delta = Math.abs(result.massIn - result.massOut);
+        const tolerance = 0.015 * result.massIn;
+        if (delta > tolerance) {
+          console.warn(`[Kernel] Mass imbalance in ${result.stageType}: in=${result.massIn.toFixed(4)} kg, out=${result.massOut.toFixed(4)} kg, delta=${delta.toFixed(4)} kg`);
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private static getStageImpact(type: string): number {
+    const map: Record<string, number> = {
+      extraction: 9.8,
+      winterization: 7.2,
+      decarboxylation: 13.2,
+      distillation: 11.5,
+    };
+    return map[type] ?? 6.0;
+  }
+
+  private static computeEnergyBalance(stages: ProcessStage[], massKg: number) {
+    const { energyPerStageKWh, thermalFraction } = this.config;
+    return {
+      energyConsumedKWh: stages.length * energyPerStageKWh + massKg * 0.65,
+      thermalEnergyKWh: stages.length * energyPerStageKWh * thermalFraction,
+      mechanicalEnergyKWh: stages.length * 1.1,
+    };
+  }
 }

@@ -1,4 +1,3 @@
-
 import { Biomass, ProcessGraph } from '../../../kernel/core/types.ts';
 
 export interface IngestedDocument {
@@ -30,10 +29,18 @@ export interface CronJob {
   id: string;
   name: string;
   schedule: string;
-  lastRun: string;
+  lastRun: string | null;
   nextRun: string;
-  status: 'active' | 'paused';
+  status: 'active' | 'paused' | 'error';
   action: string;
+  lastExecutionDuration?: number;
+}
+
+export interface CronJobFormData {
+  name: string;
+  schedule: string;
+  action: string;
+  status: 'active' | 'paused';
 }
 
 export interface RefinementLog {
