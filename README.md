@@ -1,63 +1,72 @@
-# Hemp OS
+# Hemp-OS
 
-A high-fidelity layered scientific operating system designed for hemp processing, biomanufacturing simulation, and computational research. Featuring a deterministic simulation kernel, strain crossbreeding labs, OCR CoA analysis, Google Drive integration, and autonomous scientific pipelines.
+A unified scientific operating system for hemp processing, biomanufacturing simulation, and computational research. This monorepo integrates three subsystems into a single, deterministic platform:
 
-## ⚠️ The Kernel is Law ⚠️
-Before making *any* contribution, you must ensure the core computational model remains mathematically deterministic.
+| Subsystem | Path | Role |
+|---|---|---|
+| **Hemp-OS Core** | `./` (root) | Deterministic simulation kernel, API host, React UI |
+| **Hemp-Agent** | `apps/hemp-agent/` | Multi-agent orchestrator, cultivator + research panels |
+| **Hemp-DB** | `packages/hemp-db/` | Knowledge layer: strains, insights, drizzle/Postgres + Firebase |
 
-```bash
-npm run test:kernel
+The Kernel is Law — every subsystem in this monorepo obeys the deterministic simulation kernel at the root.
+
+## Repository layout
+
 ```
-**This is the loudest signal in the repo.** The `test:kernel` suite runs hundreds of deterministic validations, coverage assertions, mass/energy balance proofs, thermodynamics bounding checks, and performance benchmarks. If it fails, your PR will be rejected. 
+Hemp-OS/
+├── apps/
+│   └── hemp-agent/        # @hemp-os/agent — multi-agent UI + orchestrator
+├── packages/
+│   └── hemp-db/           # @hemp-os/db   — knowledge layer + DB
+├── src/                   # Hemp-OS core React UI + services
+├── kernel/                # Deterministic simulation kernel (the law)
+├── server.ts              # Core API server entrypoint
+├── data/                  # Local DBs, fixtures, papers
+├── papers and data/       # Curated research CSVs
+├── researchclaw/          # Automated research / literature agent
+├── mem0-main/             # Memory layer
+├── kernel/                # Kernel: models, calibration, validation, workflow
+├── integration/, e2e/     # Cross-system integration + Playwright e2e
+├── scripts/               # Operational scripts
+├── package.json           # Root workspace manifest
+└── .gitignore
+```
 
-## Overview
-
-Hemp OS is a multi-layered deterministic platform that integrates theoretical science with automated digital processes. It handles the entire biomanufacturing pipeline, from genetic strain crossbreeding to thermodynamic modeling, phase-split analysis, data provenance, and autonomous campaign sweeps. 
-
-## Features & Layers
-
-The OS architecture is divided into 12 core layers representing unified scientific sub-systems:
-
-- **Layer 1: Autonomous Pipeline Studio** - Interactive visual flowsheet builder for chemical processes, powered by a deterministic solver kernel.
-- **Layer 2: Experiment Orchestrator** - Setup automated multi-variable sweeps across thermodynamic ranges (temperature, pressure, duration).
-- **Layer 3: Data & Provenance Ledger** - Immutable lineage logging of every pipeline execution, preserving chemical purity and parameter settings.
-- **Layer 3.5: Research Corpus** - Google Drive Knowledge Layer for parsing scientific papers and extracting metadata.
-- **Layer 4: Policy & Autonomy Guards** - Rule-based safety checking and parameter tuning agents.
-- **Layer 5: Reflexive Diagnostics** - Self-healing subsystem to detect chemical faults (e.g., solvent carryover) and automatically repair system states.
-- **Layer 6: Multi-Interface Support** - Includes interactive CLI interfaces, REST APIs, and Headless simulation access.
-- **Layer 7: Scientific Plugins** - Extensible architecture for dynamic drivers, thermodynamic libraries, and physical solvers.
-- **Layer 8: Autonomy Lab Brain** - Deterministic chron-schedulers triggering long-running laboratory queries in the background.
-- **Layer 9: Scientific Super-Systems** - Advanced mathematical modeling including CasADi optimizations, Lean 4 formal verifications, and ODESolvers.
-- **Layer 10: Strain Breed Lab** - Genetic mapping, phenotypic inheritance predictions, and visual crossbreed simulations.
-- **Layer 11: Ingestion & Analysis Hub** - Ingests external Certificates of Analysis (CoAs) via OCR, integrates with Kaggle datasets, and tracks academic RSS feeds.
-- **Layer 12: Windows System Interop** - Simulated integration with the host OS, featuring a PowerShell interface, WSL/Nix reproducible environments, Event Telemetry, VSS Time-Travel, and Copilot Agent APIs.
-
-## Tech Stack
-
-* **Frontend:** React 18, TypeScript, Tailwind CSS, Framer Motion, Lucide Icons, Recharts
-* **Backend:** Node.js, Express, Vite Middleware
-* **Simulated Kernel Engine:** Deterministic TypeScript Physics Models
-* **Authentication & File Parsing:** Firebase, Google Drive API
-
-## Setup & Running Locally
-
-Ensure you have Node.js installed, then run:
+## Quick start
 
 ```bash
-# Install dependencies
+# Install everything (workspaces hoist node_modules to root)
 npm install
 
-# Start the full-stack development server
+# Run the core kernel + API + UI
 npm run dev
+
+# Run only Hemp-Agent (port differs)
+npm run dev:agent
+
+# Run only Hemp-DB
+npm run dev:db
+
+# Build all three subsystems
+npm run build:all
 ```
 
-To build for production:
+## Workspaces
 
-```bash
-npm run build
-npm run start
-```
+This repo uses **npm workspaces**. `npm install` at the root installs deps for all three subsystems and hoists shared packages to a single `node_modules/`.
 
-## Environment Variables
+- `@hemp-os/agent` — `apps/hemp-agent/`
+- `@hemp-os/db` — `packages/hemp-db/`
+- Root (Hemp-OS core) — `./`
 
-Check `.env.example` to see which environment variables need to be supplied (e.g. `GEMINI_API_KEY`, etc). These variables are used for AI advisor capabilities and external cloud integrations.
+## ⚠️ The Kernel is Law ⚠️
+
+Hemp-OS is a deterministic scientific operating system. Every result must be reproducible. The kernel at `kernel/` is the single source of truth for all simulations. UI panels, agents, and DB insights all consume kernel outputs — never the other way around.
+
+See `kernel/README` and the root `package.json` scripts for the full rule set.
+
+## Subsystem docs
+
+- **Hemp-Agent**: see `apps/hemp-agent/README.md`
+- **Hemp-DB**: see `packages/hemp-db/README.md`
+- **Kernel**: see `kernel/` source
