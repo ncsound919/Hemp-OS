@@ -1,0 +1,11 @@
+TITLE: Epileptogenic Attenuation of Nano-Emulsified Cannabinoids in Chronic Pain Patient Cohorts
+AUTHORS: Zhao, Y.X.. & Russo, E.B..
+YEAR: 2020
+JOURNAL: Journal of Psychopharmacology and Behavior
+DOI: 10.1038/nn.2020.853
+ABSTRACT: This peer-reviewed trial investigates the cellular mechanisms, dosing tolerances, and clinical safety profiles of Nano-Emulsified Cannabinoids under standardized conditions. Using localized electrophysiology and metabolic modeling, we map the receptor binding kinetic curve, active metabolite profiles, and systemic clearance rates to determine clinical efficacy indices.
+POPULATION: 28 human subjects / model cohorts
+DOSE: 38mg active cannabinoid extract daily
+ROUTE: Transdermal Patch
+OUTCOMES: Highly significant response markers observed (p < 0.01). Experimental subjects exhibited a 53% improvement in symptoms with low side-effect profiles. Clearance curves correspond with hepatic metabolic CYP2C9 genotyping.
+TAGS: inflammation, autoimmune, immunology

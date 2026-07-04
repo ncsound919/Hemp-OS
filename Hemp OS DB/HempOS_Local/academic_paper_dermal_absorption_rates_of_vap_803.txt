@@ -1,0 +1,11 @@
+TITLE: Dermal Absorption Rates of Vaporized Cannabidiol (CBD) in Pediatric Epilepsy Subjects
+AUTHORS: Albright, S.. & Zimmer, A.M..
+YEAR: 2026
+JOURNAL: Acta Horticulturae and Genetic Breeding
+DOI: 10.1038/nn.2026.303
+ABSTRACT: This peer-reviewed trial investigates the cellular mechanisms, dosing tolerances, and clinical safety profiles of Vaporized Cannabidiol (CBD) under standardized conditions. Using localized electrophysiology and metabolic modeling, we map the receptor binding kinetic curve, active metabolite profiles, and systemic clearance rates to determine clinical efficacy indices.
+POPULATION: 78 human subjects / model cohorts
+DOSE: 8mg active cannabinoid extract daily
+ROUTE: Transdermal Patch
+OUTCOMES: Highly significant response markers observed (p < 0.01). Experimental subjects exhibited a 43% improvement in symptoms with low side-effect profiles. Clearance curves correspond with hepatic metabolic CYP2C9 genotyping.
+TAGS: insomnia, sleep disorders, sedation

@@ -1,0 +1,8 @@
+# Big Homie — Requirements
+#
+# Install core:   pip install -e .
+# Install all:    pip install -e ".[all]"
+# Install group:  pip install -e ".[gui,vector]"
+#
+# See pyproject.toml for dependency groups.
+-e .

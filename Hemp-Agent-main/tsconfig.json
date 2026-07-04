@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    "lib": ["ES2022"],
+    "isolatedModules": true,
+
+    "strict": true,
+    "skipLibCheck": true,
+
+    "allowJs": false,
+
+    "jsx": "react-jsx",
+    "noEmit": false,
+
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["src/server/**/*", "src/brain_kernel.ts"],
+  "exclude": ["node_modules", "dist"]
+}

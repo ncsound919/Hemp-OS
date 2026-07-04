@@ -1,0 +1,13 @@
+{
+  "name": "hemp-os-integration",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Cross-system integration layer for Hemp OS research platform",
+  "main": "routes.ts",
+  "scripts": {
+    "health": "curl http://localhost:3100/api/integration/health"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

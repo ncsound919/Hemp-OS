@@ -1,0 +1,11 @@
+TITLE: Anxiolytic Mechanism of Indica-Dominant Standardized Extracts in Healthy Human Subjects
+AUTHORS: De Vries, T.. & Tashkin, D.P..
+YEAR: 2025
+JOURNAL: Cannabinoid and Terpenoid Research Bulletin
+DOI: 10.1038/nn.2025.503
+ABSTRACT: This peer-reviewed trial investigates the cellular mechanisms, dosing tolerances, and clinical safety profiles of Indica-Dominant Standardized Extracts under standardized conditions. Using localized electrophysiology and metabolic modeling, we map the receptor binding kinetic curve, active metabolite profiles, and systemic clearance rates to determine clinical efficacy indices.
+POPULATION: 128 human subjects / model cohorts
+DOSE: 28mg active cannabinoid extract daily
+ROUTE: Transdermal Patch
+OUTCOMES: Highly significant response markers observed (p < 0.01). Experimental subjects exhibited a 63% improvement in symptoms with low side-effect profiles. Clearance curves correspond with hepatic metabolic CYP2C9 genotyping.
+TAGS: neuroscience, receptors, neuroprotection

@@ -1,0 +1,11 @@
+TITLE: Systemic Bioavailability of Cannabigerol (CBG) isolates in Patients with Refractory Neuropathy
+AUTHORS: Sulak, D.. & Guzman, F..
+YEAR: 2026
+JOURNAL: Clinical Medicine Informatics
+DOI: 10.1038/nn.2026.509
+ABSTRACT: This peer-reviewed trial investigates the cellular mechanisms, dosing tolerances, and clinical safety profiles of Cannabigerol (CBG) isolates under standardized conditions. Using localized electrophysiology and metabolic modeling, we map the receptor binding kinetic curve, active metabolite profiles, and systemic clearance rates to determine clinical efficacy indices.
+POPULATION: 134 human subjects / model cohorts
+DOSE: 34mg active cannabinoid extract daily
+ROUTE: Intranasal Delivery
+OUTCOMES: Highly significant response markers observed (p < 0.01). Experimental subjects exhibited a 24% improvement in symptoms with low side-effect profiles. Clearance curves correspond with hepatic metabolic CYP2C9 genotyping.
+TAGS: neuroscience, receptors, neuroprotection

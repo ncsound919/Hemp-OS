@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 0 0% 100%;
+    --card: 220 15% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 220 15% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 153 100% 41%;
+    --primary-foreground: 220 20% 4%;
+    --secondary: 220 12% 12%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 12% 15%;
+    --muted-foreground: 215 14% 60%;
+    --accent: 283 39% 53%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 354 70% 57%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 18%;
+    --input: 220 14% 18%;
+    --ring: 153 100% 41%;
+    --radius: 0.75rem;
+    
+    /* Custom Trading Colors */
+    --trade-green: 153 100% 41%;
+    --trade-red: 354 70% 57%;
+    --trade-blue: 207 90% 54%;
+    --trade-purple: 283 39% 53%;
+    --trade-orange: 37 91% 50%;
+    --trade-bg: 220 20% 4%;
+    --trade-card: 220 15% 8%;
+    --trade-border: 220 14% 18%;
+    
+    /* Animation Easings */
+    --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+    background-color: #0a0c10;
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  }
+  
+  .glow-green {
+    box-shadow: 0 0 20px rgba(0, 208, 132, 0.3), 0 0 40px rgba(0, 208, 132, 0.1);
+  }
+  
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.3), 0 0 40px rgba(155, 89, 182, 0.1);
+  }
+  
+  .glow-red {
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.3), 0 0 40px rgba(255, 71, 87, 0.1);
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400;
+  }
+  
+  .agent-card {
+    @apply relative overflow-hidden rounded-xl border border-border bg-card/80 backdrop-blur-sm;
+    transition: all 0.3s var(--ease-expo-out);
+  }
+  
+  .agent-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: rgba(0, 208, 132, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 208, 132, 0.15);
+  }
+  
+  .status-pulse {
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+  
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  .data-flow {
+    animation: dataFlow 3s linear infinite;
+  }
+  
+  .float {
+    animation: float 4s ease-in-out infinite;
+  }
+  
+  .chart-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 2s ease-out forwards;
+  }
+}
+
+@layer utilities {
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 rgba(0, 208, 132, 0.4);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 0 8px rgba(0, 208, 132, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes dataFlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 208, 132, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 208, 132, 0.5); }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #11141a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d3748;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3d4758;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 208, 132, 0.3);
+  color: white;
+}

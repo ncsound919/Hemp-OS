@@ -1,0 +1,6 @@
+{
+  "name": "Cannabis Research Repository",
+  "description": "A research platform for structured cannabis strain data, studies, and legislation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

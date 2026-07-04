@@ -1,0 +1,1494 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\User\\Desktop\\Hemp-OS-main\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "e2e\\playwright.config.ts"
+    ],
+    "configFile": "C:\\Users\\User\\Desktop\\Hemp-OS-main\\e2e\\playwright.config.ts",
+    "rootDir": "C:/Users/User/Desktop/Hemp-OS-main/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/User/Desktop/Hemp-OS-main/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "integration",
+        "name": "integration",
+        "testDir": "C:/Users/User/Desktop/Hemp-OS-main/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "e2e-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "integration.spec.ts",
+      "file": "integration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Paper Generator — Output Integrity",
+          "file": "integration.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "POST /papers/draft — creates draft with literature search triggering",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 562,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esummary failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:35:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esummary failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:35:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esummary failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:35:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:36.065Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-6b06b1534efb1b00a69b",
+              "file": "integration.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/draft — validates topic is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:37.022Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-2cdf2d280240c2c8ac91",
+              "file": "integration.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/draft — accepts strainName",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 258,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 3)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:37.050Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-1afc93ba9239c1aee19d",
+              "file": "integration.spec.ts",
+              "line": 52,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/generate — produces paper with all 6 sections and real content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 54,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:37.319Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-3c6d7841dcf71bbccca2",
+              "file": "integration.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/generate — produces LaTeX output with structural validity",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 285,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:37.384Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-f087852d611ccdbf2904",
+              "file": "integration.spec.ts",
+              "line": 122,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/generate — produces Markdown output with structural validity",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 303,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esummary failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:35:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:37.693Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-8f286fda67a10287c901",
+              "file": "integration.spec.ts",
+              "line": 174,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/generate — validates draftId is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.005Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-490e576731cf29d5b360",
+              "file": "integration.spec.ts",
+              "line": 221,
+              "column": 3
+            },
+            {
+              "title": "POST /papers/generate — returns 500 for nonexistent draftId",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.017Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-e53c1a7c89f5c8795fb1",
+              "file": "integration.spec.ts",
+              "line": 228,
+              "column": 3
+            },
+            {
+              "title": "DELETE /papers/draft/:draftId — deletes existing draft",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 257,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.029Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-7e0970288edaa95c587c",
+              "file": "integration.spec.ts",
+              "line": 237,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Research Pipeline — Full E2E Flow",
+          "file": "integration.spec.ts",
+          "line": 258,
+          "column": 6,
+          "specs": [
+            {
+              "title": "POST /research/start — executes full pipeline with coordinated output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 295,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 3)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.306Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-ccce3e80fc1bd88ad8b4",
+              "file": "integration.spec.ts",
+              "line": 259,
+              "column": 3
+            },
+            {
+              "title": "POST /research/start — validates topic is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.621Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-5eae356113cdf42e689b",
+              "file": "integration.spec.ts",
+              "line": 298,
+              "column": 3
+            },
+            {
+              "title": "POST /research/start — handles strainName-only gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 287,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 3)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:431:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.633Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-d4880415c528446d377a",
+              "file": "integration.spec.ts",
+              "line": 305,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Service Mesh — Cross-System Communication",
+          "file": "integration.spec.ts",
+          "line": 321,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GET /health — returns proper health status structure",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 28,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.932Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-180883ee02832cc6f2d4",
+              "file": "integration.spec.ts",
+              "line": 322,
+              "column": 3
+            },
+            {
+              "title": "GET /services — returns all configured services",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.970Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-6ab255514fda12181e4f",
+              "file": "integration.spec.ts",
+              "line": 350,
+              "column": 3
+            },
+            {
+              "title": "POST /events — fires events through the bus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.983Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-76b039a32425c48ba592",
+              "file": "integration.spec.ts",
+              "line": 372,
+              "column": 3
+            },
+            {
+              "title": "POST /events — validates source and type",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:38.997Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-937c386d45f9ed76fa1a",
+              "file": "integration.spec.ts",
+              "line": 381,
+              "column": 3
+            },
+            {
+              "title": "GET /provenance — tracks operations with filtering",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 33,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.009Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-1d2563d2bfa643cc596f",
+              "file": "integration.spec.ts",
+              "line": 393,
+              "column": 3
+            },
+            {
+              "title": "POST /rpc/:method — invokes registered handlers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.051Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-5aa173f97be02aaf9085",
+              "file": "integration.spec.ts",
+              "line": 425,
+              "column": 3
+            },
+            {
+              "title": "POST /rpc/:method — returns 404 for unregistered method",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.074Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-cd53c2f58f441eb2913f",
+              "file": "integration.spec.ts",
+              "line": 436,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Data Sources — Search Endpoints",
+          "file": "integration.spec.ts",
+          "line": 447,
+          "column": 6,
+          "specs": [
+            {
+              "title": "POST /search/unified — validates query is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.085Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-0ee102beda2fedce1d99",
+              "file": "integration.spec.ts",
+              "line": 448,
+              "column": 3
+            },
+            {
+              "title": "POST /search/unified — returns structured results array (may be empty if network unavailable)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 694,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.097Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-c08704c3d142b451b453",
+              "file": "integration.spec.ts",
+              "line": 455,
+              "column": 3
+            },
+            {
+              "title": "POST /search/pubmed — validates query is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.799Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-4577c20870f7bcfcf7ce",
+              "file": "integration.spec.ts",
+              "line": 481,
+              "column": 3
+            },
+            {
+              "title": "POST /search/pubmed — returns articles with proper fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 37,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:166:21\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.809Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-bea2402ba2ddc6853bc4",
+              "file": "integration.spec.ts",
+              "line": 486,
+              "column": 3
+            },
+            {
+              "title": "POST /search/openalex — returns papers with reconstructed abstracts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 116,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.853Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-dc9fe1fc97e1f3db1801",
+              "file": "integration.spec.ts",
+              "line": 512,
+              "column": 3
+            },
+            {
+              "title": "POST /search/semantic-scholar — validates query is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.979Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-9f238caafbfdab6d424b",
+              "file": "integration.spec.ts",
+              "line": 535,
+              "column": 3
+            },
+            {
+              "title": "POST /search/semantic-scholar — returns papers with citation counts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 247,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:39.991Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-bd36de421544f9d183f6",
+              "file": "integration.spec.ts",
+              "line": 540,
+              "column": 3
+            },
+            {
+              "title": "POST /batch-search — validates queries is an array",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:40.246Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-d4e2e55be485de133125",
+              "file": "integration.spec.ts",
+              "line": 560,
+              "column": 3
+            },
+            {
+              "title": "POST /batch-search — processes multiple queries",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 853,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed efetch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:45:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at batchSearchAndConvert \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:357:21\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:249:21\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esummary failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:35:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at batchSearchAndConvert \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:357:21\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:249:21\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:40.258Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-d3a589d8dc1d88599333",
+              "file": "integration.spec.ts",
+              "line": 570,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Cross-System Data Exchange",
+          "file": "integration.spec.ts",
+          "line": 586,
+          "column": 6,
+          "specs": [
+            {
+              "title": "POST /exchange/papers — validates query is required",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:41.119Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-5612d4fadf2bc614b4c3",
+              "file": "integration.spec.ts",
+              "line": 587,
+              "column": 3
+            },
+            {
+              "title": "POST /exchange/papers — returns structured paper results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 264,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:375:21\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:41.130Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-3dde7d72acd89f674b1a",
+              "file": "integration.spec.ts",
+              "line": 592,
+              "column": 3
+            },
+            {
+              "title": "POST /exchange/strains — fires provenance event",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:41.403Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-4c53d3977057b0c90e19",
+              "file": "integration.spec.ts",
+              "line": 603,
+              "column": 3
+            },
+            {
+              "title": "POST /exchange/insights — triggers provenance and events",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:41.415Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-cf56b170fe119f9de551",
+              "file": "integration.spec.ts",
+              "line": 612,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Strain-Specific Paper Generation",
+          "file": "integration.spec.ts",
+          "line": 622,
+          "column": 6,
+          "specs": [
+            {
+              "title": "strain name appears consistently across all paper sections",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2332,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 3)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:41.426Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-90eba4511ebdf5812cbf",
+              "file": "integration.spec.ts",
+              "line": 623,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Edge Cases and Error Handling",
+          "file": "integration.spec.ts",
+          "line": 659,
+          "column": 6,
+          "specs": [
+            {
+              "title": "topic with special characters does not break generation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 282,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:43.770Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-5950ee5115240934e8e5",
+              "file": "integration.spec.ts",
+              "line": 660,
+              "column": 3
+            },
+            {
+              "title": "concurrent drafts do not interfere",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9479,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esummary failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:35:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed efetch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:45:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 1)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 2)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        },
+                        {
+                          "text": "PubMed search error: Error: PubMed esearch failed: HTTP 429\n    at searchPubMed \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:23:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:229:28\n    at async Promise.allSettled (index 0)\n    at unifiedSearch \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/data-sources.ts:278:22\u001b[90m)\u001b[39m\n    at async Promise.all (index 0)\n    at PaperGenerator.createDraft \u001b[90m(file:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/paper-generator.ts:35:26\u001b[90m)\u001b[39m\n    at \u001b[90mfile:///C:/Users/User/Desktop/Hemp-OS-main/\u001b[39mintegration/routes.ts:284:9\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:44.063Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-3526bad7706eef0d2b34",
+              "file": "integration.spec.ts",
+              "line": 690,
+              "column": 3
+            },
+            {
+              "title": "Provenance tracking persists across multiple operations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "integration",
+                  "projectName": "integration",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-03T15:39:53.552Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4c8f7e420cc033ba00ea-4f2f6f6b55041c6036d8",
+              "file": "integration.spec.ts",
+              "line": 716,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-03T15:39:35.115Z",
+    "duration": 18506.095999999998,
+    "expected": 36,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

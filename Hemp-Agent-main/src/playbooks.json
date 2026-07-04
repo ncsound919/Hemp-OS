@@ -1,0 +1,24 @@
+{
+  "distillationPatterns": [
+    {
+      "test": "vape|adolescent",
+      "fact": "Daily high-potency THC inhalation downregulates CB1, triggering microglial-mediated dendritic spine loss in adolescent PFC.",
+      "template": "For adolescent vape queries, fetch rodent developmental studies and override adult risk weights.",
+      "node": { "id": "Adolescent_Pruning", "label": "Adolescent Pruning", "type": "Pathway" },
+      "edge": { "source": "CB1", "target": "Adolescent_Pruning", "relation": "associated_with" }
+    },
+    {
+      "test": "caryophyllene|microglia",
+      "fact": "Beta-Caryophyllene activates CB2 on microglia, inhibiting NF-kB for anti-inflammatory neuroprotection.",
+      "template": "For neuroprotective compounds, sequence omics agent first to check cytokine expression.",
+      "node": { "id": "NF_KB_Pathway", "label": "NF-kB Pathway", "type": "Pathway" },
+      "edge": { "source": "CB2", "target": "NF_KB_Pathway", "relation": "upregulates" }
+    }
+  ],
+  "defaultPattern": {
+    "fact": "Exogenous cannabinoid agonists trigger dose-dependent homeostatic synaptic dampening.",
+    "template": "Always run kinetics simulation before final summary.",
+    "node": { "id": "Homeostatic_Dampening", "label": "Homeostatic Dampening", "type": "Pathway" },
+    "edge": { "source": "Cannabinoid_Receptor", "target": "Homeostatic_Dampening", "relation": "associated_with" }
+  }
+}

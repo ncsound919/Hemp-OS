@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  # ===========================================================================
+  # Hemp OS Core (Node.js + Express + React)
+  # ===========================================================================
+  hemp-os:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3100:3100"
+    environment:
+      - NODE_ENV=production
+      - PORT=3100
+      - API_KEY=${API_KEY:-dev-key-change-in-production}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - PYTHON_SERVICE_URL=http://python-service:8000
+      - DATA_DIR=/data
+    volumes:
+      - hemp_os_data:/data
+      - ./kernel:/app/kernel
+      - ./integration:/app/integration
+      - ./src:/app/src
+    depends_on:
+      - python-service
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3100/health').then(r => process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # Python Scientific Microservice (Biopython, RDKit, SciPy, StatsModels)
+  # ===========================================================================
+  python-service:
+    build:
+      context: ./python-microservice
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - hemp_os_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # (Optional) PostgreSQL + PostGIS for geospatial/compliance data
+  # Uncomment when needed for field data collection
+  # ===========================================================================
+  # postgres:
+  #   image: postgis/postgis:16-3.4
+  #   environment:
+  #     POSTGRES_DB: hemp_os
+  #     POSTGRES_PASSWORD: ${PG_PASSWORD:-changeit}
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
+
+volumes:
+  hemp_os_data:
+  # postgres_data:

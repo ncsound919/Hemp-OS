@@ -1,0 +1,6 @@
+{
+  "name": "Hemp OS",
+  "description": "A high-fidelity layered scientific operating system for hemp processing, featuring a deterministic simulation kernel, strain crossbreeding lab, OCR CoA analysis, and science API/Kaggle ingestion feeds.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

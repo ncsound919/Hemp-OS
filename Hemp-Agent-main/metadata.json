@@ -1,0 +1,6 @@
+{
+  "name": "THC Brain Informatics Core",
+  "description": "Hemp OS core service for cannabinoid-brain informatics, real-time ingestion, knowledge graph mapping, multi-agent reasoning, and self-learning memory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
