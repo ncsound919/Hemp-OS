@@ -1,12 +1,14 @@
-{
-  "name": "Prism Mamba #966",
-  "type": "sativa",
-  "thc": "25.6%",
-  "cbd": "0.2%",
-  "terpenes": "Myrcene: 0.85%, Limonene: 0.40%, Caryophyllene: 0.32%",
-  "effects": "Creative, Clear-headed, Euphoric",
-  "medicalUses": "Mild Pain, Chronic Fatigue, ADHD Symptoms",
-  "lab": "Veritas Phytochemical Testing Labs",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Prism Mamba #966",
+    "type":  "sativa",
+    "thc":  "25.6%",
+    "cbd":  "0.2%",
+    "terpenes":  "Myrcene: 0.85%, Limonene: 0.40%, Caryophyllene: 0.32%",
+    "effects":  "Creative, Clear-headed, Euphoric",
+    "medicalUses":  "Mild Pain, Chronic Fatigue, ADHD Symptoms",
+    "lab":  "DEMO LAB - Simulated data, not a real testing facility",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

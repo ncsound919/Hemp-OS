@@ -1,12 +1,14 @@
-{
-  "name": "Hindu Runtz #742",
-  "type": "hybrid",
-  "thc": "26.2%",
-  "cbd": "0.3%",
-  "terpenes": "Pinene: 0.60%, Myrcene: 0.40%, Linalool: 0.25%",
-  "effects": "Focused, Calm, Balanced, Relaxed",
-  "medicalUses": "Severe Insomnia, Muscle Spasms, Acute Anxiety",
-  "lab": "Veritas Phytochemical Testing Labs",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Hindu Runtz #742",
+    "type":  "hybrid",
+    "thc":  "26.2%",
+    "cbd":  "0.3%",
+    "terpenes":  "Pinene: 0.60%, Myrcene: 0.40%, Linalool: 0.25%",
+    "effects":  "Focused, Calm, Balanced, Relaxed",
+    "medicalUses":  "Severe Insomnia, Muscle Spasms, Acute Anxiety",
+    "lab":  "DEMO LAB - Simulated data, not a real testing facility",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

@@ -1,12 +1,14 @@
-{
-  "name": "Black Mamba #534",
-  "type": "sativa",
-  "thc": "28.4%",
-  "cbd": "0.2%",
-  "terpenes": "Myrcene: 1.20%, Pinene: 0.50%, Linalool: 0.35%",
-  "effects": "Uplifting, Talkative, Creative, Happy",
-  "medicalUses": "Appetite Loss, Chronic Pain, Inflammation, Nausea",
-  "lab": "Veritas Phytochemical Testing Labs",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Black Mamba #534",
+    "type":  "sativa",
+    "thc":  "28.4%",
+    "cbd":  "0.2%",
+    "terpenes":  "Myrcene: 1.20%, Pinene: 0.50%, Linalool: 0.35%",
+    "effects":  "Uplifting, Talkative, Creative, Happy",
+    "medicalUses":  "Appetite Loss, Chronic Pain, Inflammation, Nausea",
+    "lab":  "DEMO LAB - Simulated data, not a real testing facility",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

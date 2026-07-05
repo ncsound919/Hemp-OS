@@ -1,12 +1,14 @@
-{
-  "name": "Infinity Thunder #944",
-  "type": "indica",
-  "thc": "18.4%",
-  "cbd": "9.0%",
-  "terpenes": "Linalool: 0.70%, Limonene: 0.55%, Caryophyllene: 0.30%",
-  "effects": "Creative, Sociable, Giggles, Energetic",
-  "medicalUses": "Chronic Pain, Nausea, Migraines, Stress",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Infinity Thunder #944",
+    "type":  "indica",
+    "thc":  "18.4%",
+    "cbd":  "9.0%",
+    "terpenes":  "Linalool: 0.70%, Limonene: 0.55%, Caryophyllene: 0.30%",
+    "effects":  "Creative, Sociable, Giggles, Energetic",
+    "medicalUses":  "Chronic Pain, Nausea, Migraines, Stress",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

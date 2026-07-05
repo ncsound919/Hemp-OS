@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { env } from '../config/env.ts';
 import { logger } from '../lib/logger.ts';
+import crypto from 'crypto';
 
 let hasWarnedNoApiKey = false;
 
@@ -25,7 +26,17 @@ export function apiKeyAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   const provided = req.headers['x-api-key'];
-  if (provided !== env.API_KEY) {
+  if (!provided || typeof provided !== 'string') {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized',
+      requestId: req.headers['x-request-id'],
+    });
+  }
+
+  const keyHash = crypto.createHash('sha256').update(env.API_KEY).digest();
+  const providedHash = crypto.createHash('sha256').update(provided).digest();
+  if (!crypto.timingSafeEqual(keyHash, providedHash)) {
     return res.status(401).json({
       success: false,
       error: 'Unauthorized',

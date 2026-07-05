@@ -1,12 +1,14 @@
-{
-  "name": "Infinity Sherbet #884",
-  "type": "indica",
-  "thc": "18.4%",
-  "cbd": "9.0%",
-  "terpenes": "Myrcene: 1.20%, Pinene: 0.50%, Linalool: 0.35%",
-  "effects": "Uplifting, Talkative, Creative, Happy",
-  "medicalUses": "Appetite Loss, Chronic Pain, Inflammation, Nausea",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Infinity Sherbet #884",
+    "type":  "indica",
+    "thc":  "18.4%",
+    "cbd":  "9.0%",
+    "terpenes":  "Myrcene: 1.20%, Pinene: 0.50%, Linalool: 0.35%",
+    "effects":  "Uplifting, Talkative, Creative, Happy",
+    "medicalUses":  "Appetite Loss, Chronic Pain, Inflammation, Nausea",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

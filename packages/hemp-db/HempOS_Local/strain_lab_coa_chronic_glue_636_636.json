@@ -1,12 +1,14 @@
-{
-  "name": "Chronic Glue #636",
-  "type": "sativa",
-  "thc": "25.6%",
-  "cbd": "13.0%",
-  "terpenes": "Myrcene: 0.85%, Limonene: 0.40%, Caryophyllene: 0.32%",
-  "effects": "Creative, Clear-headed, Euphoric",
-  "medicalUses": "Mild Pain, Chronic Fatigue, ADHD Symptoms",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Chronic Glue #636",
+    "type":  "sativa",
+    "thc":  "25.6%",
+    "cbd":  "13.0%",
+    "terpenes":  "Myrcene: 0.85%, Limonene: 0.40%, Caryophyllene: 0.32%",
+    "effects":  "Creative, Clear-headed, Euphoric",
+    "medicalUses":  "Mild Pain, Chronic Fatigue, ADHD Symptoms",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

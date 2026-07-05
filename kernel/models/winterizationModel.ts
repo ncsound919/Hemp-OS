@@ -3,40 +3,26 @@ import { WinterizationRunInput, WinterizationRunOutput, ModelMetadata } from '..
 export const winterizationModelMetadata: ModelMetadata = {
   id: 'winterization.v2.0.0',
   name: 'Solubility & Crystallization Filtration Winterization Model',
-  description: 'Models wax and lipid precipitation as a thermodynamic crystallization process governed by low temperatures and duration, followed by mechanical filter cake retention and washing loss. Calibrated against published ethanol-lipid phase behavior data.',
-  source: 'Derived from multi-phase solid-liquid equilibrium data of saturated lipids in ethanol. References: [1-4].',
+  description: 'Models wax and lipid precipitation as a thermodynamic crystallization process governed by low temperatures and duration, followed by mechanical filter cake retention and washing loss. Constants are engineering estimates based on general ethanol-lipid phase behavior.',
+  source: 'Engineering estimates based on general solid-liquid equilibrium principles of saturated lipids in ethanol. Literature verification pending.',
   version: '2.0.0',
 };
 
 /**
- * Winterization model coefficients with literature sources.
+ * Winterization model coefficients.
  *
- * REFERENCES:
- * [1] Kovač, A. et al. (2022). "Winterization of cannabis extracts:
- *     A comprehensive study of lipid precipitation kinetics in ethanol."
- *     Separation and Purification Technology, 297, 121490.
- *     DOI: 10.1016/j.seppur.2022.121490
- *     - Reports wax precipitation as function of temperature and time
- *     - Maximum precipitation ~98% at T ≤ -40°C after 12-24 hours
- *     - Crystallization rate constant range: 0.12–0.20 h⁻¹
+ * These constants are engineering estimates consistent with the general
+ * physical behavior of wax precipitation in ethanol at low temperature.
+ * They have NOT been verified against specific published studies and
+ * should be treated as approximate until laboratory calibration is performed.
  *
- * [2] Darby, D. et al. (2021). "Optimization of winterization parameters
- *     for cannabis oil refining." J. Cannabis Research, 3(1), 24.
- *     DOI: 10.1186/s42238-021-00078-w
- *     - Filter efficiency of 90-96% per pass for precipitated waxes
- *     - Cake retention of 10-18% oil by mass of captured wax
- *
- * [3] Marshall, D.D. et al. (2023). "Thermodynamic modeling of lipid
- *     solubility in ethanol-water mixtures at subzero temperatures."
- *     Fluid Phase Equilibria, 570, 113790.
- *     - Reports exponential solubility drop below -20°C
- *     - Ethanol concentration effect on wax solubility
- *
- * [4] Lewis, S.E. et al. (2024). "Industrial winterization scale-up:
- *     Mass transfer and washing efficiency in filter cake systems."
- *     J. Supercritical Fluids, 205, 106115.
- *     - Washing efficiency models for cake filtration
- *     - Solvent ratio effect on cannabinoid retention losses
+ * Physical basis:
+ * - Wax solubility in ethanol drops exponentially below 0°C
+ * - Precipitation follows first-order crystallization kinetics
+ * - Mechanical filtration captures precipitated solids with typical
+ *   efficiency in the 90-96% range per pass
+ * - Filter cake retains a fraction of oil proportional to captured wax mass
+ * - Additional solvent washing recovers some retained oil
  */
 const LITERATURE_COEFFICIENTS = {
   // Maximum wax precipitation achievable at sufficiently low temperature [1]

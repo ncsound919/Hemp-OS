@@ -1,12 +1,14 @@
-{
-  "name": "Amethyst Clementine #640",
-  "type": "hybrid",
-  "thc": "14.0%",
-  "cbd": "5.0%",
-  "terpenes": "Caryophyllene: 0.80%, Humulene: 0.30%, Limonene: 0.25%",
-  "effects": "Tingly, Sleepy, Hungry, Relaxed",
-  "medicalUses": "Muscle Spasms, Neuropathy, Stress, Insomnia",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Amethyst Clementine #640",
+    "type":  "hybrid",
+    "thc":  "14.0%",
+    "cbd":  "5.0%",
+    "terpenes":  "Caryophyllene: 0.80%, Humulene: 0.30%, Limonene: 0.25%",
+    "effects":  "Tingly, Sleepy, Hungry, Relaxed",
+    "medicalUses":  "Muscle Spasms, Neuropathy, Stress, Insomnia",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

@@ -1,12 +1,14 @@
-{
-  "name": "Cherry Glookies #832",
-  "type": "hybrid",
-  "thc": "26.2%",
-  "cbd": "5.0%",
-  "terpenes": "Myrcene: 1.20%, Pinene: 0.50%, Linalool: 0.35%",
-  "effects": "Uplifting, Talkative, Creative, Happy",
-  "medicalUses": "Appetite Loss, Chronic Pain, Inflammation, Nausea",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Cherry Glookies #832",
+    "type":  "hybrid",
+    "thc":  "26.2%",
+    "cbd":  "5.0%",
+    "terpenes":  "Myrcene: 1.20%, Pinene: 0.50%, Linalool: 0.35%",
+    "effects":  "Uplifting, Talkative, Creative, Happy",
+    "medicalUses":  "Appetite Loss, Chronic Pain, Inflammation, Nausea",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

@@ -79,6 +79,16 @@ __pycache__/
 venv/
 .env-venv
 
+# Vendored / external projects (not part of Hemp-OS)
+mem0-main/
+AgentBrowser-main/
+Data_Visualization-main/
+researchclaw/
+
+# Sensitive config files
+firebase-applet-config.json
+.env.production
+
 # Misc temp / generated
 tmp/
 temp/

@@ -12,17 +12,17 @@ export const decarboxylationModelMetadata: ModelMetadata = {
  * Decarboxylation kinetic parameters derived from published literature.
  *
  * REFERENCES:
- * [1] Perrotin-Brunel, H. et al. (2010). "Kinetic study on the thermal
- *     conversion of Δ9-tetrahydrocannabinolic acid A (THCA) to Δ9-
- *     tetrahydrocannabinol (THC)." J. Pharmaceutical Sciences, 99(11),
- *     4563-4571. DOI: 10.1002/jps.22168
- *     - Reports Ea = 109-120 kJ/mol for THCA → THC
+ * [1] Perrotin-Brunel, H., Buijs, W., van Spronsen, J., van Roosmalen,
+ *     M.J.E., Peters, C.J., Verpoorte, R., & Witkamp, G.-J. (2011).
+ *     "Decarboxylation of Δ9-tetrahydrocannabinol: Kinetics and molecular
+ *     modeling." Journal of Molecular Structure, 987(1-3), 67-73.
+ *     DOI: 10.1016/j.molstruc.2010.11.061
+ *     - Reports Ea = 84.8 kJ/mol for THCA → THC
  *     - Pre-exponential factor A ≈ 10¹²-10¹³ min⁻¹
  *
  * [2] Wang, M. et al. (2016). "Decarboxylation study of acidic
  *     cannabinoids: A unified kinetic model." Cannabis and Cannabinoid
  *     Research, 1(1), 12-20. DOI: 10.1089/can.2016.0013
- *     - Reports Ea = 108-115 kJ/mol for CBDA → CBD
  *     - Confirm first-order kinetics for all acid cannabinoids
  *
  * [3] Citti, C. et al. (2018). "Kinetic and thermodynamic study of the
@@ -48,10 +48,12 @@ export class DecarboxylationModel {
     A_degradation: 8.0e11,  // Cannabinoid degradation (THC → CBN etc.)
 
     // Activation energies (J/mol) from [1, 2, 3]
-    Ea_thca: 110000,        // THCA decarboxylation
-    Ea_cbda: 108000,        // CBDA decarboxylation
-    Ea_cbga: 109000,        // CBGA decarboxylation
-    Ea_degradation: 105000, // Thermal degradation
+    // Reference [1] reports Ea = 84.8 kJ/mol for THCA; CBDA/CBGA and
+    // degradation values are engineering estimates awaiting literature confirmation.
+    Ea_thca: 84800,         // THCA decarboxylation (84.8 kJ/mol, [1])
+    Ea_cbda: 84800,         // CBDA decarboxylation (estimated same as THCA)
+    Ea_cbga: 84800,         // CBGA decarboxylation (estimated same as THCA)
+    Ea_degradation: 105000, // Thermal degradation (engineering estimate)
 
     // CO₂ loss correction factor
     // Decarboxylation removes CO₂ from the carboxyl group.

@@ -1,12 +1,14 @@
-{
-  "name": "Mango Cookies #554",
-  "type": "indica",
-  "thc": "18.4%",
-  "cbd": "0.4%",
-  "terpenes": "Terpinolene: 1.12%, Caryophyllene: 0.48%, Pinene: 0.35%",
-  "effects": "Energetic, Euphoric, Uplifting, Focused",
-  "medicalUses": "Depression, Chronic Fatigue, Appetite Loss",
-  "lab": "Veritas Phytochemical Testing Labs",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Mango Cookies #554",
+    "type":  "indica",
+    "thc":  "18.4%",
+    "cbd":  "0.4%",
+    "terpenes":  "Terpinolene: 1.12%, Caryophyllene: 0.48%, Pinene: 0.35%",
+    "effects":  "Energetic, Euphoric, Uplifting, Focused",
+    "medicalUses":  "Depression, Chronic Fatigue, Appetite Loss",
+    "lab":  "DEMO LAB - Simulated data, not a real testing facility",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

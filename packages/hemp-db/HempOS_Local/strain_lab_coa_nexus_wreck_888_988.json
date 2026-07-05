@@ -1,12 +1,14 @@
-{
-  "name": "Nexus Wreck #888",
-  "type": "sativa",
-  "thc": "22.8%",
-  "cbd": "13.0%",
-  "terpenes": "Caryophyllene: 0.80%, Humulene: 0.30%, Limonene: 0.25%",
-  "effects": "Tingly, Sleepy, Hungry, Relaxed",
-  "medicalUses": "Muscle Spasms, Neuropathy, Stress, Insomnia",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Nexus Wreck #888",
+    "type":  "sativa",
+    "thc":  "22.8%",
+    "cbd":  "13.0%",
+    "terpenes":  "Caryophyllene: 0.80%, Humulene: 0.30%, Limonene: 0.25%",
+    "effects":  "Tingly, Sleepy, Hungry, Relaxed",
+    "medicalUses":  "Muscle Spasms, Neuropathy, Stress, Insomnia",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

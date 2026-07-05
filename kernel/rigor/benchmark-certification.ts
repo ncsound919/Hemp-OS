@@ -163,7 +163,7 @@ export class BenchmarkCertification {
     cert += `\n## Certified Parameters\n\n`;
     cert += `The following physical invariants are verified by these benchmarks:\n\n`;
     cert += `- Mass conservation (biomass → oil → distillate) within 1.5% tolerance\n`;
-    cert += `- Arrhenius kinetics for THCA → THC conversion (first-order, Ea=110 kJ/mol)\n`;
+    cert += `- Arrhenius kinetics for THCA → THC conversion (first-order, Ea=84.8 kJ/mol, from Perrotin-Brunel et al. 2011)\n`;
     cert += `- Cannabinoid solubility in ethanol follows exponential temperature dependence\n`;
     cert += `- Clausius-Clapeyron vapor pressure estimation for molecular distillation\n`;
 

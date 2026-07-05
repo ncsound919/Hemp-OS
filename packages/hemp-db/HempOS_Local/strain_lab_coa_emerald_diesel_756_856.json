@@ -1,12 +1,14 @@
-{
-  "name": "Emerald Diesel #756",
-  "type": "sativa",
-  "thc": "25.6%",
-  "cbd": "13.0%",
-  "terpenes": "Terpinolene: 1.12%, Caryophyllene: 0.48%, Pinene: 0.35%",
-  "effects": "Energetic, Euphoric, Uplifting, Focused",
-  "medicalUses": "Depression, Chronic Fatigue, Appetite Loss",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Emerald Diesel #756",
+    "type":  "sativa",
+    "thc":  "25.6%",
+    "cbd":  "13.0%",
+    "terpenes":  "Terpinolene: 1.12%, Caryophyllene: 0.48%, Pinene: 0.35%",
+    "effects":  "Energetic, Euphoric, Uplifting, Focused",
+    "medicalUses":  "Depression, Chronic Fatigue, Appetite Loss",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

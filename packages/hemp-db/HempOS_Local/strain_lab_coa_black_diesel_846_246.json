@@ -1,12 +1,14 @@
-{
-  "name": "Black Diesel #846",
-  "type": "sativa",
-  "thc": "25.6%",
-  "cbd": "0.8%",
-  "terpenes": "Limonene: 0.95%, Myrcene: 0.62%, Caryophyllene: 0.45%",
-  "effects": "Relaxed, Happy, Creative, Sleepy",
-  "medicalUses": "Anxiety, Chronic Stress, Depression, Mild Pain",
-  "lab": "Veritas Phytochemical Testing Labs",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Black Diesel #846",
+    "type":  "sativa",
+    "thc":  "25.6%",
+    "cbd":  "0.8%",
+    "terpenes":  "Limonene: 0.95%, Myrcene: 0.62%, Caryophyllene: 0.45%",
+    "effects":  "Relaxed, Happy, Creative, Sleepy",
+    "medicalUses":  "Anxiety, Chronic Stress, Depression, Mild Pain",
+    "lab":  "DEMO LAB - Simulated data, not a real testing facility",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

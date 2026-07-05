@@ -1,12 +1,14 @@
-{
-  "name": "Emerald Punch #448",
-  "type": "hybrid",
-  "thc": "17.8%",
-  "cbd": "5.0%",
-  "terpenes": "Limonene: 0.95%, Myrcene: 0.62%, Caryophyllene: 0.45%",
-  "effects": "Relaxed, Happy, Creative, Sleepy",
-  "medicalUses": "Anxiety, Chronic Stress, Depression, Mild Pain",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Emerald Punch #448",
+    "type":  "hybrid",
+    "thc":  "17.8%",
+    "cbd":  "5.0%",
+    "terpenes":  "Limonene: 0.95%, Myrcene: 0.62%, Caryophyllene: 0.45%",
+    "effects":  "Relaxed, Happy, Creative, Sleepy",
+    "medicalUses":  "Anxiety, Chronic Stress, Depression, Mild Pain",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

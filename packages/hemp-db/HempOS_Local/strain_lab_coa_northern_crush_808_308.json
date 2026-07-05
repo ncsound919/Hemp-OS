@@ -1,12 +1,14 @@
-{
-  "name": "Northern Crush #808",
-  "type": "hybrid",
-  "thc": "17.8%",
-  "cbd": "5.0%",
-  "terpenes": "Linalool: 0.70%, Limonene: 0.55%, Caryophyllene: 0.30%",
-  "effects": "Creative, Sociable, Giggles, Energetic",
-  "medicalUses": "Chronic Pain, Nausea, Migraines, Stress",
-  "lab": "HempOS Autonomous Lab Diagnostics",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Northern Crush #808",
+    "type":  "hybrid",
+    "thc":  "17.8%",
+    "cbd":  "5.0%",
+    "terpenes":  "Linalool: 0.70%, Limonene: 0.55%, Caryophyllene: 0.30%",
+    "effects":  "Creative, Sociable, Giggles, Energetic",
+    "medicalUses":  "Chronic Pain, Nausea, Migraines, Stress",
+    "lab":  "HempOS Autonomous Lab Diagnostics",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }

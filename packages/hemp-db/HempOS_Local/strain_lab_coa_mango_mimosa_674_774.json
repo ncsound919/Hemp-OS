@@ -1,12 +1,14 @@
-{
-  "name": "Mango Mimosa #674",
-  "type": "indica",
-  "thc": "18.4%",
-  "cbd": "0.7%",
-  "terpenes": "Caryophyllene: 0.80%, Humulene: 0.30%, Limonene: 0.25%",
-  "effects": "Tingly, Sleepy, Hungry, Relaxed",
-  "medicalUses": "Muscle Spasms, Neuropathy, Stress, Insomnia",
-  "lab": "Veritas Phytochemical Testing Labs",
-  "entityType": "strain",
-  "source": "HempOS Harvest Engine"
+﻿{
+    "name":  "Mango Mimosa #674",
+    "type":  "indica",
+    "thc":  "18.4%",
+    "cbd":  "0.7%",
+    "terpenes":  "Caryophyllene: 0.80%, Humulene: 0.30%, Limonene: 0.25%",
+    "effects":  "Tingly, Sleepy, Hungry, Relaxed",
+    "medicalUses":  "Muscle Spasms, Neuropathy, Stress, Insomnia",
+    "lab":  "DEMO LAB - Simulated data, not a real testing facility",
+    "entityType":  "strain",
+    "source":  "HempOS Harvest Engine",
+    "synthetic":  true,
+    "provenance":  "simulated"
 }
