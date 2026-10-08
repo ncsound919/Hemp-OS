@@ -1,7 +1,7 @@
 fastapi>=0.110.0
 uvicorn>=0.29.0
 biopython>=1.83
-scipy>=1.14.0
+scipy>=1.18.1
 statsmodels>=0.14.0
 rdkit>=2024.9
 pandas>=2.2.0
